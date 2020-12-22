@@ -32,7 +32,7 @@ FISCOBCOS C# Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual Stu
 4. 将上面编译得到abi和bin 放到你的项目中，进行相关操作。
 
 参考：
-![Image text](https://gitee.com/linxuanming/fiscobcos.-net/raw/main/Img/how-to-use-console-generator1.gif)
+![vs Code 编译合约说明](https://github.com/FISCO-BCOS/csharp-sdk/blob/master/Img/how-to-use-console-generator1.gif)
 
 #### 使用说明
 
