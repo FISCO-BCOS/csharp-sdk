@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>林宣名</Authors>
+    <Version>1.0.0.3</Version>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <NeutralLanguage>zh</NeutralLanguage>
+    <PackageIcon>fiscobcos_logo.png</PackageIcon>
+    <Description>FISCOBCOS BlockChain CSharpSdk</Description>
+    <PackageId>FISCOBCOS.CSharpSdk</PackageId>
+    <Product>FISCOBCOS.CSharpSdk</Product>
+    <AssemblyName>FISCOBCOS.CSharpSdk</AssemblyName>
+    <RootNamespace>FISCOBCOS.CSharpSdk</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>0</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>D:\Develop\OpenSource\FISCOBCOS.CSharpSdk\Src\FISCOBCOS.CSharpSdk\FISCOBCOS.CSharpSdk.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nethereum.ABI" Version="3.8.0" />
+    <PackageReference Include="Nethereum.Contracts" Version="3.8.0" />
+    <PackageReference Include="Nethereum.Hex" Version="3.8.0" />
+    <PackageReference Include="Nethereum.JsonRpc.RpcClient" Version="3.8.0" />
+    <PackageReference Include="Nethereum.RLP" Version="3.8.0" />
+    <PackageReference Include="Nethereum.RPC" Version="3.8.0" />
+    <PackageReference Include="Nethereum.Signer" Version="3.8.0" />
+    <PackageReference Include="Nethereum.Util" Version="3.8.0" />
+    <PackageReference Include="Nethereum.Web3" Version="3.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\Img\fiscobcos_logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

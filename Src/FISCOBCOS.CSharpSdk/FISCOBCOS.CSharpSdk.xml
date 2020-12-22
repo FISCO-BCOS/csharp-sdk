@@ -1,0 +1,604 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FISCOBCOS.CSharpSdk</name>
+    </assembly>
+    <members>
+        <member name="M:FISCOBCOS.CSharpSdk.AccountUtils.GeneratorAccount(System.String)">
+            <summary>
+            自动生成一个用户(公钥，私钥，地址)
+            </summary>
+            <param name="userName">自定义用户名称</param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.AccountUtils.GeneratorPublicKeyByPrivateKey(System.String)">
+            <summary>
+            通过私钥生成公钥
+            </summary>
+            <param name="privateKey">私钥</param>
+            <returns>返回公钥</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.#ctor(System.String,System.Int32,System.Int32,System.Int32,System.String)">
+            <summary>
+            创建合约服务
+            </summary>
+            <param name="url">请求底层通信地址</param>
+            <param name="rpcId">rpcId 默认为1</param>
+            <param name="chainId">链Id</param>
+            <param name="groupId">群组Id</param>
+            <param name="privateKey">用私钥</param>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.DeployContractAsync(System.String)">
+            <summary>
+            异步 通用合约部署，只返回交易Hash
+            </summary>
+            <param name="binCode">合约内容</param>
+            <returns>交易Hash</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.DeployContractWithReceiptAsync(System.String)">
+            <summary>
+            异步 通用合约部署，返回交易回执
+            </summary>
+            <param name="binCode">合约内容</param>
+            <returns>交易回执</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.SendTranscationWithReceiptAsync(System.String,System.String,System.String,Nethereum.ABI.Model.Parameter[],System.Object[])">
+             <summary>
+            异步 发送交易,返回交易回执
+             </summary>
+             <param name="abi">合约abi</param>
+             <param name="contractAddress">合约地址</param>
+             <param name="functionName">合约请求调用方法名称</param>
+             <param name="inputsParameters">方法对应的 参数</param>
+             <param name="value">请求参数值</param>
+             <returns>交易回执</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.GetTranscationReceiptAsync(System.String)">
+            <summary>
+            异步 获取交易回执
+            </summary>
+            <param name="tanscationHash">交易Hash</param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.CallRequestAsync(System.String,System.String,System.String)">
+            <summary>
+            异步 Call 调用 适用于链上调用但不需要共识（通常用constant,view等修饰的合约方法）
+            </summary>
+            <param name="contractAddress">合约地址</param>
+            <param name="abi">合约abi</param>
+            <param name="callFunctionName">调用方法名称</param>
+            <returns>返回交易回执</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.SendRequestAysnc``1(System.Byte[][],Nethereum.Signer.EthECDSASignature)">
+            <summary>
+            异步请求发送RPC交易
+            </summary>
+            <typeparam name="TResult">返回结果</typeparam>
+            <param name="txData">交易数据（rlp）</param>
+            <param name="txSignature">交易签名</param>
+            <returns>返回交易结果</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.GetBlockNumberAsync">
+            <summary>
+            异步获取当前区块高度
+            </summary>
+            <param name="rpcId">rpcId</param>
+            <param name="groupId">群组Id</param>
+            <returns>当前区块高度</returns>
+        </member>
+        <member name="T:FISCOBCOS.CSharpSdk.ApiService.QueryApiService">
+            <summary>
+            基础json rpc api 查询服务
+            </summary>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.ApiService.QueryApiService.SendQueryAsync``1(System.String,System.Object[])">
+            <summary>
+            异步 rpc 其他接口相对简单，参数要求参照单元测试 
+            具体参考：https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/docs/api.html
+            采用在线json 转实体等方式进行自己该做转化
+            </summary>
+            <param name="apiName">api请求接口名</param>
+            <param name="paramsValue">对应的请求参数</param>
+            <returns>返回值，根据文档中对应api 返回object </returns>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultUrl">
+            <summary>
+            链上jsonapi 通信地址 通常是ip：8545端口
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultChainId">
+            <summary>
+            默认链Id
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultGroupId">
+            <summary>
+            默认群组Id
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultRpcId">
+            <summary>
+            rpc 请求默认标识Id
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultGasLimit">
+            <summary>
+            默认GasLimit
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultGasPrice">
+            <summary>
+            默认GasPrice
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultRequestId">
+            <summary>
+            默认构建请求Id
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultRequestObjectId">
+            <summary>
+            默认构建请求 参数Id
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultTranscationsValue">
+            <summary>
+            默认交易参数Value
+            </summary>
+        </member>
+        <member name="T:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig">
+            <summary>
+             JsonRPCAPI 方法配置
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetClientVersion">
+            <summary>
+            返回节点的版本信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetBlockNumber">
+            <summary>
+            返回节点指定群组内的最新区块高度
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetPbftView">
+            <summary>
+            返回节点所在指定群组内的最新PBFT视图
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetSealerList">
+            <summary>
+            返回指定群组内的共识节点列表
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetObserverList">
+            <summary>
+            返回指定群组内的观察节点列表
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetConsensusStatus">
+            <summary>
+            返回指定群组内的共识状态信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetSyncStatus">
+            <summary>
+            返回指定群组内的同步状态信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetPeers">
+            <summary>
+            返回已连接的p2p节点信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetGroupPeers">
+            <summary>
+            返回指定群组内的共识节点和观察节点列表
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetNodeIDList">
+            <summary>
+            返回节点本身和已连接的p2p节点列表
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetGroupList">
+            <summary>
+            返回节点所属群组的群组ID列表
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetBlockByHash">
+            <summary>
+            返回根据区块哈希查询的区块信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetBlockByNumber">
+            <summary>
+            返回根据区块高度查询的区块信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetBlockHashByNumber">
+            <summary>
+            返回根据区块高度查询的区块哈希
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetTransactionByHash">
+            <summary>
+            返回根据交易哈希查询的交易信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetTransactionByBlockHashAndIndex">
+            <summary>
+            返回根据区块哈希和交易序号查询的交易信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetTransactionByBlockNumberAndIndex">
+            <summary>
+            返回根据区块高度和交易序号查询的交易信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetTransactionReceipt">
+            <summary>
+            返回根据交易哈希查询的交易回执信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetPendingTransactions">
+            <summary>
+            返回待打包的交易信息
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetPendingTxSize">
+            <summary>
+            返回待打包的交易数量
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetCode">
+            <summary>
+            返回根据合约地址查询的合约数据
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetTotalTransactionCount">
+            <summary>
+            返回当前交易总数和区块高度
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.GetSystemConfigByKey">
+            <summary>
+            返回根据key值查询的value值
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.Call">
+            <summary>
+            执行一个可以立即获得结果的请求，无需区块链共识
+            </summary>
+        </member>
+        <member name="F:FISCOBCOS.CSharpSdk.JsonRPCAPIConfig.SendRawTransaction">
+            <summary>
+            执行一个签名的交易，需要区块链共识
+            </summary>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.BuildTransactionParams(System.String,System.Int64,System.String)">
+            <summary>
+            构建交易参数
+            </summary>
+            <param name="txData">交易数据</param>
+            <param name="blockNumber">区块高度</param>
+            <param name="to">发送地址</param>
+            <returns>交易参数实体</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.BuildRLPTranscation(FISCOBCOS.CSharpSdk.Dto.TransactionDto)">
+            <summary>
+            创建交易RLP
+            </summary>
+            <param name="rawTransaction">交易实体</param>
+            <returns>RLPSigner</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.GetBlockNumber">
+             <summary>
+            同步 获取当前区块高度
+             </summary>
+             <param name="rpcId">rpcId</param>
+             <param name="groupId">群组Id</param>
+             <returns>当前区块高度</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.SendRequest``1(System.Byte[][],Nethereum.Signer.EthECDSASignature)">
+            <summary>
+            请求发送RPC交易
+            </summary>
+            <typeparam name="TResult">返回结果</typeparam>
+            <param name="txData">交易数据（rlp）</param>
+            <param name="txSignature">交易签名</param>
+            <returns>返回交易结果</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.DeployContract(System.String)">
+            <summary>
+            同步 通用合约部署，只返回交易Hash
+            </summary>
+            <param name="binCode">合约内容</param>
+            <returns>交易Hash</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.DeployContractWithReceipt(System.String)">
+            <summary>
+            同步 通用合约部署，返回交易回执
+            </summary>
+            <param name="binCode">合约内容</param>
+            <returns>交易回执</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.SendTranscationWithReceipt(System.String,System.String,System.String,Nethereum.ABI.Model.Parameter[],System.Object[])">
+             <summary>
+            同步 发送交易,返回交易回执
+             </summary>
+             <param name="abi">合约abi</param>
+             <param name="contractAddress">合约地址</param>
+             <param name="functionName">合约请求调用方法名称</param>
+             <param name="inputsParameters">方法对应的 参数</param>
+             <param name="value">请求参数值</param>
+             <returns>交易回执</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.GetTranscationReceipt(System.String)">
+            <summary>
+            同步 获取交易回执
+            </summary>
+            <param name="tanscationHash">交易Hash</param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.CallRequest(System.String,System.String,System.String)">
+            <summary>
+            同步 Call 调用 适用于链上调用但不需要共识（通常用constant,view等修饰的合约方法）
+            </summary>
+            <param name="contractAddress">合约地址</param>
+            <param name="abi">合约abi</param>
+            <param name="callFunctionName">调用方法名称</param>
+            <returns>返回交易回执</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.SendQuery``1(System.String,System.Object[])">
+            <summary>
+            rpc 其他接口查询
+            </summary>
+            <param name="apiName">api请求接口名</param>
+            <param name="paramsValue">对应的请求参数</param>
+            <returns>返回值，根据文档中对应api 返回object </returns>
+        </member>
+        <member name="T:FISCOBCOS.CSharpSdk.Core.SolidityABI">
+            <summary>
+            合约解析
+            </summary>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.SolidityABI.InputDecode(System.String,System.String)">
+            <summary>
+            解析Input
+            </summary>
+            <param name="functionName">对应的input 方法名</param>
+            <param name="encodeInput">原始input</param>
+            <returns>解析后的合约input参数集合</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.SolidityABI.OutputDecode(System.String,System.String)">
+            <summary>
+            解析output
+            </summary>
+            <param name="functionName">对应的output 方法名</param>
+            <param name="encodeInput">原始output</param>
+            <returns>解析后的合约output参数集合</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.SolidityABI.OutputDecode``1(``0,System.String)">
+            <summary>
+            解析output
+            </summary>
+            <typeparam name="FunctionOutputDTO">解析output Dto</typeparam>
+            <param name="encodeOutput">原始output</param>
+            <returns>解析后得到对象</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Core.SolidityABI.EventDecode(System.String,FISCOBCOS.CSharpSdk.Dto.BcosFilterLog[])">
+            <summary>
+            解析Event
+            </summary>
+            <param name="eventName">even名称</param>
+            <param name="logs">对应logs</param>
+            <returns>返回解析后的Event数据</returns>
+        </member>
+        <member name="T:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto">
+            <summary>
+            交易回执Dto
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.BlockHash">
+            <summary>
+            区块链Hash
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.BlockNumber">
+            <summary>
+            区块高度
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.ContractAddress">
+            <summary>
+            合约地址
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.From">
+            <summary>
+            调用者
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.GasUsed">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.Input">
+            <summary>
+            输入内容
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.Logs">
+            <summary>
+              日志  logs: Array - Array of log objects, which this transaction generated.
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.LogsBloom">
+            <summary>
+            布隆过滤器
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.Output">
+            <summary>
+            输出内容
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.Status">
+            <summary>
+            状态
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.To">
+            <summary>
+            接受方
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.TransactionHash">
+            <summary>
+            交易hash
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.ReceiptResultDto.transactionIndex">
+            <summary>
+            交易Index
+            </summary>
+        </member>
+        <member name="T:FISCOBCOS.CSharpSdk.Dto.TransactionDto">
+            <summary>
+            交易Dto
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.Randomid">
+            <summary>
+            随机数，用于交易防重
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.GasPrice">
+            <summary>
+            默认为30000000
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.GasLimit">
+            <summary>
+            交易消耗gas上限，默认为30000000
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.BlockLimit">
+            <summary>
+            交易防重上限，默认为当前最新区块高度+500
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.To">
+            <summary>
+            一般为合约地址
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.Value">
+            <summary>
+            默认为0
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.Data">
+            <summary>
+            交易数据
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.FiscoChainId">
+            <summary>
+            链Id
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.GroupId">
+            <summary>
+            群组Id
+            </summary>
+        </member>
+        <member name="P:FISCOBCOS.CSharpSdk.Dto.TransactionDto.ExtraData">
+            <summary>
+            附加数据，默认为空字符串
+            </summary>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utils.FileUtils.ReadFile(System.String,System.String@,System.String)">
+            <summary>
+            文件读取操作
+            </summary>
+            <param name="filePath">文件地址</param>
+            <param name="fileContent">文件读取内容</param>
+            <param name="error">错误消息</param>
+            <returns>是否正常读取</returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utils.HttpUtils.HttpPost(System.String,System.String,System.String)">
+            <summary>
+            HTTP POST方式请求数据
+            </summary>
+            <param name="url">URL.</param>
+            <param name="param">POST的数据</param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utils.HttpUtils.RpcPost``1(System.String,Nethereum.JsonRpc.Client.RpcMessages.RpcRequestMessage)">
+            <summary>
+            同步
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="url"></param>
+            <param name="rpcRequestMessage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utils.HttpUtils.RpcPostAsync``1(System.String,Nethereum.JsonRpc.Client.RpcMessages.RpcRequestMessage)">
+            <summary>
+            异步
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="url"></param>
+            <param name="rpcRequestMessage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utils.HttpUtils.HttpPut(System.String,System.String)">
+            <summary>
+            HTTP Put方式请求数据.
+            </summary>
+            <param name="url">URL.</param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utils.HttpUtils.HttpDelete(System.String,System.String)">
+            <summary>
+            HTTP Delete方式请求数据.
+            </summary>
+            <param name="url">URL.</param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utils.HttpUtils.HttpGet(System.String,System.Collections.Hashtable)">
+            <summary>
+            HTTP GET方式请求数据.
+            </summary>
+            <param name="url">URL.</param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utils.HttpUtils.HttpPost(System.String,System.Collections.Generic.IDictionary{System.Object,System.Object},System.Byte[])">
+            <summary>
+            HTTP POST方式请求数据(带图片)
+            </summary>
+            <param name="url">URL</param>        
+            <param name="param">POST的数据</param>
+            <param name="fileByte">图片</param>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utils.HttpUtils.CreateHttpClient(System.String)">
+            <summary>
+            创建HttpClient
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:FISCOBCOS.CSharpSdk.Utis.JsonUtils.GetValueByKey``1(Newtonsoft.Json.Linq.JObject,System.String)">
+            <summary>
+            通过Json数据中的key获取对应的Value 重名的获取第一个
+            </summary>
+            <typeparam name="T">所获取数据的数据类型</typeparam>
+            <param name="jObject">JObject对象</param>
+            <param name="key">key</param>
+            <returns>key对应的Value  没有找到时返回null</returns>
+        </member>
+    </members>
+</doc>
