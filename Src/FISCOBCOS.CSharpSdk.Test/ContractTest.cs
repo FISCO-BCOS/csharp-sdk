@@ -50,6 +50,7 @@ namespace FISCOBCOS.CSharpSdkTest
             var txHash =  contractService.DeployContract(binCode);
             //0x1fbfad279a915d51e4dd14a6d22cf8a437eafbd666e8a880d99d055b57f48b03
             Assert.NotNull(txHash);
+           
         }
 
         /// <summary>
@@ -62,7 +63,9 @@ namespace FISCOBCOS.CSharpSdkTest
             string txHash = "0x1fbfad279a915d51e4dd14a6d22cf8a437eafbd666e8a880d99d055b57f48b03";
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var result =  contractService.GetTranscationReceipt(txHash);
+
             Assert.NotNull(result.ContractAddress);
+           
         }
 
         /// <summary>

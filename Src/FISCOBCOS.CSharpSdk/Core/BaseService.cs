@@ -117,6 +117,7 @@ namespace FISCOBCOS.CSharpSdk.Core
         {
             var rlpSignedEncoded = RLPEncoder.EncodeSigned(new SignedData(txData, txSignature), 10).ToHex();
             var request = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.SendRawTransaction, new object[] { this._requestObjectId, rlpSignedEncoded });
+           
             var result = HttpUtils.RpcPost<TResult>(this._url, request);
             return result;
         }
@@ -133,6 +134,7 @@ namespace FISCOBCOS.CSharpSdk.Core
             var tx = BuildRLPTranscation(transParams);
             tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
             var result = SendRequest<object>(tx.Data, tx.Signature);
+           
             return Convert.ToString(result);
 
         }

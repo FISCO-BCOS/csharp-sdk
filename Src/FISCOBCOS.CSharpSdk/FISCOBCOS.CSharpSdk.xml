@@ -104,7 +104,7 @@
         <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultUrl">
             <summary>
             链上jsonapi 通信地址 通常是ip：8545端口
-            </summary>
+            </summary>       
         </member>
         <member name="F:FISCOBCOS.CSharpSdk.BaseConfig.DefaultChainId">
             <summary>

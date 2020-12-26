@@ -104,6 +104,7 @@ namespace FISCOBCOS.CSharpSdk.Utils
             {
                 response = request.GetResponse() as HttpWebResponse;//异步
                 rpcResponseMessage = BuildResponse(response);
+                
                 t = AnalysisResponse<T>(rpcResponseMessage);
 
             }
@@ -206,8 +207,7 @@ namespace FISCOBCOS.CSharpSdk.Utils
                 using (var streamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
                 using (var reader = new JsonTextReader(streamReader))
                 {
-                    string temp = streamReader.ReadToEnd();
-
+                    string temp = streamReader.ReadToEnd();                
                     rpcResponseMessage = temp.ToObject<RpcResponseMessage>();
 
                 }
@@ -222,6 +222,11 @@ namespace FISCOBCOS.CSharpSdk.Utils
             {
                 result = rpcResponseMessage.Result.ToObject<T>();
             }
+            else {
+
+                throw new Exception(rpcResponseMessage.Error.ToJson());
+            }
+
 
             return result;
         }
