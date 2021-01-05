@@ -4,22 +4,7 @@
 # FISCOBCOS C# Sdk
 
 #### 介绍
-
-FISCOBCOS 区块链 C# Sdk，目前是采用Json RPC API 接口和区块链底层（标准版本）进行适配。
-
-作者：林宣名 
-
-B站教学视频：
-
-FISCO BCOS C#Sdk之交易解析（上）:https://www.bilibili.com/video/BV1av41147Lo
-
-FISCO BCOS C#Sdk之交易解析（中）:https://www.bilibili.com/video/BV19z4y167zv
-
-FISCO BCOS C#Sdk之交易解析（下）:https://www.bilibili.com/video/BV11K4y1L7SD
-
-有好的建议，请联系我！ 我的邮箱：2594771947@qq.com
-
-
+FISCOBCOS 区块链 C#版SDK，目前是采用Json RPC API 接口和区块链底层（标准版本）进行适配。
 
 #### 软件架构
 
@@ -41,13 +26,13 @@ FISCOBCOS C# Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual Stu
 
 #### 安装教程
 
-1.  下载源码，vs2019 nuget包还原; 或使用 nuget包安装，安装命令如下： Install-Package FISCOBCOS.CSharpSdk -Version 1.0.0.4
+1.  下载源码，vs2019 nuget包还原。
 2. vs code 安装solidity 插件，在vs code创建一个文件夹存放原始sol合约。
 3. vs code 按 F5 执行编译命令 “compile current Solidity contract”,会生成合约对应的abi和bin。
 4. 将上面编译得到abi和bin 放到你的项目中，进行相关操作。
 
 参考：
-![vs Code 编译合约说明](https://github.com/FISCO-BCOS/csharp-sdk/blob/master/Img/how-to-use-console-generator1.gif)
+![Image text](https://gitee.com/linxuanming/fiscobcos.-net/raw/main/Img/how-to-use-console-generator1.gif)
 
 #### 使用说明
 
@@ -64,5 +49,11 @@ FISCOBCOS C# Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual Stu
 3. 业务归集等通用组件扩展。
 
 
+#### 参与贡献
+
+1.  Fork 本仓库
+2.  新建 Feat_xxx 分支
+3.  提交代码
+4.  新建 Pull Request
 
 
