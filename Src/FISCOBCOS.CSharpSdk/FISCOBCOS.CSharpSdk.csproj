@@ -18,7 +18,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>0</WarningLevel>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <DocumentationFile>H:\Code\giteeCode\csharp-sdk\Src\FISCOBCOS.CSharpSdk\FISCOBCOS.CSharpSdk.xml</DocumentationFile>
+    <DocumentationFile>FISCOBCOS.CSharpSdk.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
