@@ -18,6 +18,13 @@
             <param name="privateKey">私钥</param>
             <returns>返回公钥</returns>
         </member>
+        <member name="M:FISCOBCOS.CSharpSdk.AccountUtils.GetAddressByPrivateKey(System.String)">
+             <summary>
+            通过私钥获得帐户地址
+             </summary>
+             <param name="privateKey"></param>
+             <returns></returns>
+        </member>
         <member name="M:FISCOBCOS.CSharpSdk.ContractService.#ctor(System.String,System.Int32,System.Int32,System.Int32,System.String)">
             <summary>
             创建合约服务
@@ -28,14 +35,14 @@
             <param name="groupId">群组Id</param>
             <param name="privateKey">用私钥</param>
         </member>
-        <member name="M:FISCOBCOS.CSharpSdk.ContractService.DeployContractAsync(System.String)">
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.DeployContractAsync(System.String,System.String,System.Object[])">
             <summary>
             异步 通用合约部署，只返回交易Hash
             </summary>
             <param name="binCode">合约内容</param>
             <returns>交易Hash</returns>
         </member>
-        <member name="M:FISCOBCOS.CSharpSdk.ContractService.DeployContractWithReceiptAsync(System.String)">
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.DeployContractWithReceiptAsync(System.String,System.String,System.Object[])">
             <summary>
             异步 通用合约部署，返回交易回执
             </summary>
@@ -60,7 +67,7 @@
             <param name="tanscationHash">交易Hash</param>
             <returns></returns>
         </member>
-        <member name="M:FISCOBCOS.CSharpSdk.ContractService.CallRequestAsync(System.String,System.String,System.String)">
+        <member name="M:FISCOBCOS.CSharpSdk.ContractService.CallRequestAsync(System.String,System.String,System.String,Nethereum.ABI.Model.Parameter[],System.Object[])">
             <summary>
             异步 Call 调用 适用于链上调用但不需要共识（通常用constant,view等修饰的合约方法）
             </summary>
@@ -316,7 +323,7 @@
             <param name="binCode">合约内容</param>
             <returns>交易Hash</returns>
         </member>
-        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.DeployContractWithReceipt(System.String)">
+        <member name="M:FISCOBCOS.CSharpSdk.Core.BaseService.DeployContractWithReceipt(System.String,System.String,System.Object[])">
             <summary>
             同步 通用合约部署，返回交易回执
             </summary>

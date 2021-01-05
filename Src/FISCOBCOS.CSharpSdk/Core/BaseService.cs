@@ -144,8 +144,6 @@ namespace FISCOBCOS.CSharpSdk.Core
 
             var transParams = BuildTransactionParams(resultData, blockNumber, "");
 
-
-
             var tx = BuildRLPTranscation(transParams);
             tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
             var result = SendRequest<object>(tx.Data, tx.Signature);

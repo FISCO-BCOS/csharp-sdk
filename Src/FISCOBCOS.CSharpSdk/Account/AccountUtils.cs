@@ -43,5 +43,16 @@ namespace FISCOBCOS.CSharpSdk
             var publicKey = "0x" + ecKey.GetPubKeyNoPrefix().ToHex();
             return publicKey;
         }
+
+        /// <summary>
+        ///通过私钥获得帐户地址
+        /// </summary>
+        /// <param name="privateKey"></param>
+        /// <returns></returns>
+        public static string GetAddressByPrivateKey(string privateKey)
+        {
+            var accountAddress = new Account(privateKey).Address.ToLower();//address 
+            return accountAddress;
+        }
     }
 }

@@ -1,5 +1,4 @@
 pragma solidity >=0.4.24 <0.6.11;
-
 import "./IERC20.sol";
 import "./SafeMath.sol";
 
@@ -14,11 +13,18 @@ contract ERC20 is IERC20 {
   using SafeMath for uint256;
 
   mapping (address => uint256) private _balances;
-
   mapping (address => mapping (address => uint256)) private _allowed;
-
   uint256 private _totalSupply;
 
+  mapping(address=>uint256)public newestKeyIndex;
+  mapping (address => mapping (uint256 => transOjbect)) private _accountTransLogs;
+
+  struct transOjbect { 
+   address send;
+   address receive;
+   bytes32 typeName;
+   uint256 amount;
+  }
   /**
   * @dev Total number of tokens in existence
   */
@@ -53,6 +59,21 @@ contract ERC20 is IERC20 {
     return _allowed[owner][spender];
   }
 
+  function getTransLogs(address account)public view returns(address[] memory,address[] memory,bytes32[] memory,uint256[] memory){
+       address[] memory sendList = new address[](uint256(newestKeyIndex[account]));
+       address[] memory receiveList = new address[](uint256(newestKeyIndex[account]));
+       bytes32[] memory typeNameList = new bytes32[](uint256(newestKeyIndex[account]));
+       uint256[] memory amountList = new uint256[](uint256(newestKeyIndex[account]));
+        for(uint256  i=0;i<newestKeyIndex[account];++i){
+           sendList[i]=_accountTransLogs[account][i+1].send;
+           receiveList[i]=_accountTransLogs[account][i+1].receive;
+           typeNameList[i]=_accountTransLogs[account][i+1].typeName;
+           amountList[i]=_accountTransLogs[account][i+1].amount;
+      }
+       return (sendList,receiveList,typeNameList,amountList);
+  
+  }
+
   /**
   * @dev Transfer token for a specified address
   * @param to The address to transfer to.
@@ -64,6 +85,20 @@ contract ERC20 is IERC20 {
 
     _balances[msg.sender] = _balances[msg.sender].sub(value);
     _balances[to] = _balances[to].add(value);
+
+         _accountTransLogs[msg.sender][newestKeyIndex[msg.sender]+1].send=msg.sender;
+         _accountTransLogs[msg.sender][newestKeyIndex[msg.sender]+1].receive=to;
+         _accountTransLogs[msg.sender][newestKeyIndex[msg.sender]+1].typeName="扣除";
+         _accountTransLogs[msg.sender][newestKeyIndex[msg.sender]+1].amount=value;
+        newestKeyIndex[msg.sender]=newestKeyIndex[msg.sender]+1;
+        
+         _accountTransLogs[to][newestKeyIndex[to]+1].send=msg.sender;
+         _accountTransLogs[to][newestKeyIndex[to]+1].receive=to;
+         _accountTransLogs[to][newestKeyIndex[to]+1].typeName="增加";
+         _accountTransLogs[to][newestKeyIndex[to]+1].amount=value;
+        newestKeyIndex[to]=newestKeyIndex[to]+1;
+    
+   
     emit Transfer(msg.sender, to, value);
     return true;
   }
@@ -169,6 +204,7 @@ contract ERC20 is IERC20 {
     require(account!= address(0));
     _totalSupply = _totalSupply.add(amount);
     _balances[account] = _balances[account].add(amount);
+   
     emit Transfer(address(0), account, amount);
   }
 

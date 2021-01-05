@@ -47,10 +47,23 @@ namespace FISCOBCOS.CSharpSdk
         /// </summary>
         /// <param name="binCode">合约内容</param>
         /// <returns>交易Hash</returns>
-        public async Task<string> DeployContractAsync(string binCode)
+        public async Task<string> DeployContractAsync(string binCode, string abi = null, params object[] values)
         {
             var blockNumber = await GetBlockNumberAsync();
-            var transParams = BuildTransactionParams(binCode, blockNumber, "");
+            var resultData = "";
+            ConstructorCallEncoder _constructorCallEncoder = new ConstructorCallEncoder();
+            if (values == null || values.Length == 0)
+                resultData = _constructorCallEncoder.EncodeRequest(binCode, "");
+
+            var des = new ABIDeserialiser();
+            var contract = des.DeserialiseContract(abi);
+            if (contract.Constructor == null)
+                throw new Exception(
+                    "Parameters supplied for a constructor but ABI does not contain a constructor definition");
+            resultData = _constructorCallEncoder.EncodeRequest(binCode,
+         contract.Constructor.InputParameters, values);
+
+            var transParams = BuildTransactionParams(resultData, blockNumber, "");
             var tx = BuildRLPTranscation(transParams);
             tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
             var result = await SendRequestAysnc<string>(tx.Data, tx.Signature);
@@ -63,9 +76,9 @@ namespace FISCOBCOS.CSharpSdk
         /// </summary>
         /// <param name="binCode">合约内容</param>
         /// <returns>交易回执</returns>
-        public async Task<ReceiptResultDto> DeployContractWithReceiptAsync(string binCode)
+        public async Task<ReceiptResultDto> DeployContractWithReceiptAsync(string binCode, string abi = null, params object[] values)
         {
-            var txHash = await DeployContractAsync(binCode);
+            var txHash = await DeployContractAsync(binCode, abi, values);
             var receiptResult = await GetTranscationReceiptAsync(txHash);
             return receiptResult;
         }
@@ -129,17 +142,31 @@ namespace FISCOBCOS.CSharpSdk
         /// <param name="abi">合约abi</param>
         /// <param name="callFunctionName">调用方法名称</param>
         /// <returns>返回交易回执</returns>
-        public async Task<ReceiptResultDto> CallRequestAsync(string contractAddress, string abi, string callFunctionName)
+        public async Task<ReceiptResultDto> CallRequestAsync(string contractAddress, string abi, string callFunctionName, Parameter[] inputsParameters = null, params object[] value)
         {
             CallInput callDto = new CallInput();
             callDto.From = new Account(this._privateKey).Address.ToLower();//address ;
-            callDto.To = contractAddress;
             var contractAbi = new ABIDeserialiser().DeserialiseContract(abi);
-            var function = contractAbi.Functions.FirstOrDefault(x => x.Name == callFunctionName);
+            callDto.To = contractAddress;
             callDto.Value = new HexBigInteger(0);
-            callDto.Data = "0x" + function.Sha3Signature;
+            var function = contractAbi.Functions.FirstOrDefault(x => x.Name == callFunctionName);
+
+            var sha3Signature = function.Sha3Signature;// "0x53ba0944";
+
+            if (inputsParameters == null)
+            {
+                callDto.Data = "0x" + sha3Signature;
+            }
+            else
+            {
+                var functionCallEncoder = new FunctionCallEncoder();
+                var funcData = functionCallEncoder.EncodeRequest(sha3Signature, inputsParameters,
+                    value);
+                callDto.Data = funcData;
+            }
             var getRequest = new RpcRequest(this._requestId, JsonRPCAPIConfig.Call, new object[] { this._requestObjectId, callDto });
             var result = await this._rpcClient.SendRequestAsync<ReceiptResultDto>(getRequest);
+
             //var getRequest = new RpcRequestMessage(this.RequestId, JsonRPCAPIConfig.Call, new object[] { this.RequestObjectId, callDto });
             //var result = HttpUtils.RpcPost<ReceiptResultDto>(BaseConfig.DefaultUrl, getRequest); //同步方法
             return result;
