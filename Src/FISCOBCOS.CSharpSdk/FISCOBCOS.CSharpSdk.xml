@@ -527,6 +527,8 @@
             附加数据，默认为空字符串
             </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:FISCOBCOS.CSharpSdk.Utils.ObjectToBytesUtils.ObjectToBytes(System.Object)" -->
+        <!-- Badly formed XML comment ignored for member "M:FISCOBCOS.CSharpSdk.Utils.ObjectToBytesUtils.BytesToObject(System.Byte[])" -->
         <member name="M:FISCOBCOS.CSharpSdk.Utils.FileUtils.ReadFile(System.String,System.String@,System.String)">
             <summary>
             文件读取操作

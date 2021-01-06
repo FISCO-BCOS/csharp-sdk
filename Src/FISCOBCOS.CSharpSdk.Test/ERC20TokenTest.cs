@@ -2,10 +2,13 @@
 using FISCOBCOS.CSharpSdk.Dto;
 using FISCOBCOS.CSharpSdk.Utils;
 using FISCOBCOS.CSharpSdk.Utis;
+using Nethereum.ABI;
 using Nethereum.ABI.FunctionEncoding;
+using Nethereum.ABI.FunctionEncoding.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -99,7 +102,6 @@ namespace FISCOBCOS.CSharpSdk.Test
         [Fact]
         public async Task TransferAysncTest()
         {
-
             #region 1-转账交易 给测试用户 0x4d1a493a93effee00171b0b9c96fc3d62066febf 转100 HTC
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var tempUserAddress = "0x4d1a493a93effee00171b0b9c96fc3d62066febf";//接受转账的用户地址
@@ -125,8 +127,6 @@ namespace FISCOBCOS.CSharpSdk.Test
             Assert.True(eventpramas2.Result.ToString() == tempUserAddress);
             Assert.True(long.Parse(eventpramas3.Result.ToString()) == 2000);
             #endregion
-
-
         }
 
         /// <summary>
@@ -137,9 +137,10 @@ namespace FISCOBCOS.CSharpSdk.Test
         public async Task GetAccountBalanceAysncTest()
         {
             string contractAddress = "0xa8059ddb27e30e795c01e9b226a977ec108ac05c";//上面测试部署合约得到合约地址
-            string issuerAddress = "0xf827414cb1c39787d50bcebe534abe1ed2d5619f";//发起方的地址
+
             var tempUserAddress = "0x4d1a493a93effee00171b0b9c96fc3d62066febf";//接受转账的用户地址
-            var tempPrivateKey = "0x" + "3d3b37d27af1fe316f44913363e6edfa9fabf95f70f6e0754fdeedcd619ab651";
+                                                                               // string issuerAddress = "0xf827414cb1c39787d50bcebe534abe1ed2d5619f";//发起方的地址
+                                                                               // var tempPrivateKey = "0x" + "3d3b37d27af1fe316f44913363e6edfa9fabf95f70f6e0754fdeedcd619ab651";
             var tempContractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var tempInputsParameters = new[] { BuildParams.CreateParam("address", "owner") };
             var tempParamsValue = new object[] { tempUserAddress };
@@ -174,24 +175,35 @@ namespace FISCOBCOS.CSharpSdk.Test
             //2、测试查询交易
             ReceiptResultDto tempReceiptResultDto = await tempContractService.CallRequestAsync(contractAddress, abi, tempFunctionName, tempInputsParameters, tempParamsValue);
             var tempSolidityAbi = new SolidityABI(abi);
+
+            var functionCallDecoder = new FunctionCallDecoder();
+            //最快获取解析返回值
+            var rs = functionCallDecoder.DecodeFunctionOutput<FunctionMultipleInputOutput>(tempReceiptResultDto.Output);
+
             var tempOutputList = tempSolidityAbi.OutputDecode(tempFunctionName, tempReceiptResultDto.Output).ToArray();
-
-            var tempParameterDecoder = new ParameterDecoder();
-            var tm = tempParameterDecoder.DecodeOutput(tempReceiptResultDto.Output, tempOutputList);
-
+            //var tm = tempParameterDecoder.DecodeOutput(tempReceiptResultDto.Output, tempOutputList);
             var sendList = tempOutputList[0].Result.ToJson().ToObject<List<string>>();
             var receiveList = tempOutputList[1].Result.ToJson().ToObject<List<string>>();
             var typeList = tempOutputList[2].Result.ToJson().ToObject<List<Byte[]>>();
             var tempTypeList = new List<String>();
+
             foreach (var i in typeList)
             {
                 //forearch的陷阱如果不复制给一个值，最后存进去都是同一个对象，循环尽量用for
                 var tempData = i;
-
-                tempTypeList.Add(System.Text.Encoding.UTF8.GetString(tempData));
+                var bytesType = ABIType.CreateABIType("bytes32");
+                //when
+                var typeString = bytesType.Decode<string>(i);
+                tempTypeList.Add(typeString);
+                //tempTypeList.Add(System.Text.Encoding.UTF8.GetString(tempData));
             }
 
-            var amountList = tempOutputList[3].Result.ToJson().ToObject<List<string>>(); ;
+            var amountList = tempOutputList[3].Result.ToJson().ToObject<List<string>>();
+
+            var arrayType = ArrayType.CreateABIType("uint[]");
+
+
+            //var result = bytesType.Decode<Guid>(encoded);
             Assert.True(sendList.Count > 0);
             Assert.True(receiveList.Count > 0);
             Assert.True(tempTypeList.Count > 0);
@@ -199,5 +211,24 @@ namespace FISCOBCOS.CSharpSdk.Test
             // //sAssert.Equal(997800, long.Parse(tempBalance));
 
         }
+
+
+    }
+    [Function("getTransLogs")]
+    [FunctionOutput]
+    public class FunctionMultipleInputOutput
+    {
+        [Parameter("address[]")]
+        public List<string> SendList { get; set; }
+
+        [Parameter("address[]", "", 2)]
+        public List<string> ReceiveList { get; set; }
+        [Parameter("bytes32[]", 3)]
+        public List<string> TypeNameList { get; set; }
+
+        [Parameter("uint256[]", 4)]
+        public List<BigInteger> AmountList { get; set; }
+
+
     }
 }
