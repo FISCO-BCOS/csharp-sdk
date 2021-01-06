@@ -15,3 +15,10 @@
    如：主要是合约的address(0) ， import 需要"./xx.sol" 重点是"./"
 
    0xcbcad18a54988b35407ff3514644dc3ce6a227770f1f998ffd45e722ae8f67c4
+
+2020-1-6
+
+1、新增constructor 参数部署和返回调用优化
+2、新增erc20token 合约
+3、真毒erc20 拓展交易日志
+4、针对ECDSA 进行用户签名和验签

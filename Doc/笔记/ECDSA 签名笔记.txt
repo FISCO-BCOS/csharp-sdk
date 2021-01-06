@@ -1,0 +1,54 @@
+EthereumMessageSigner 
+MessageSigner
+RLPSigner
+
+EthKey 可以new 加入string类型的私钥，可以进行签名和解签
+ 
+ public EthECDSASignature SignAndCalculateV(byte[] hash)
+        {
+            var signature = _ecKey.Sign(hash);
+            var recId = CalculateRecId(signature, hash);
+            signature.V = new[] {(byte) (recId + 27)};
+            return new EthECDSASignature(signature);
+        }
+
+       //签名对象得到签名字符串
+        public static string CreateStringSignature(EthECDSASignature signature)
+        {
+            return "0x" + signature.R.ToHex().PadLeft(64, '0') +
+                   signature.S.ToHex().PadLeft(64, '0') +
+                   signature.V.ToHex();
+        }
+
+       //签名字符串，转签名对象
+        public static ECDSASignature ExtractECDSASignature(string signature)
+        {
+            var signatureArray = signature.HexToByteArray();
+            return ExtractECDSASignature(signatureArray);
+        }
+
+        public static ECDSASignature ExtractECDSASignature(byte[] signatureArray)
+        { 
+            var v = signatureArray[64];
+
+            if (v == 0 || v == 1)
+                v = (byte)(v + 27);
+
+            var r = new byte[32];
+            Array.Copy(signatureArray, r, 32);
+            var s = new byte[32];
+            Array.Copy(signatureArray, 32, s, 0, 32);
+
+            return ECDSASignatureFactory.FromComponents(r, s, v);
+        }
+
+
+EthECKey RecoverFromSignature
+
+	R = {93513773123033415293743467553857325623168487353922837515934393492760805588941}
+	S = {35357171495649660821656246108215324032900219055942099780431734557176969056779}
+	v=28
+
+
+	cebeeb806b602b6b1661ce60d78ee8597cb7799adf4c153e0a52386b8d393fcd4e2b732bd3637f55e09aacfd1c5b1fd27be0b50c5a857ad35b76ce5a2450520b
+	cebeeb806b602b6b1661ce60d78ee8597cb7799adf4c153e0a52386b8d393fcd4e2b732bd3637f55e09aacfd1c5b1fd27be0b50c5a857ad35b76ce5a2450520b     01
