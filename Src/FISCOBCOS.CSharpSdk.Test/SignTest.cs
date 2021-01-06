@@ -71,5 +71,39 @@ namespace FISCOBCOS.CSharpSdk.Test
                 "0xb5b1870957d373ef0eeffecc6e4812c0fd08f554b37b233526acc331bf1544f7");
 
         }
+
+        /// <summary>
+        /// ECDSA 签名，通过原始数据，解析得到公钥和原始公钥进行比对
+        /// </summary>
+        [Fact]
+        public void ShouldRecover()
+        {
+
+            string privateKey = "0x95b2de506d7f63be7d28ff76e1a6d2ee12ed28b2f1d929f48ecf92dc0c4ba743";//私钥
+            string messageDigest = "38510ae104cf0445c6fd014973eaf668cc06a3b9e603f9e2950bdf5e968b188a";//消息摘要
+            EthECKey ethECKey = new EthECKey(privateKey);
+            EthECDSASignature ethECDSASignature = ethECKey.Sign(messageDigest.HexToByteArray());//r、s、有值，v没有值
+            EthECDSASignature tempSign = ethECKey.SignAndCalculateV(messageDigest.HexToByteArray());
+
+            //假设生产环节拿到签名string
+            string signature = EthECDSASignature.CreateStringSignature(tempSign);
+            //通过签名，得到eth的ecdsd的签名对象
+            EthECDSASignature ethECDSA = EthECDSASignatureFactory.ExtractECDSASignature(signature);
+            //通过消息摘要、签名对象，解析得到公钥，如果公钥和用户的公钥是一样，那么签名验证成功
+            var pubKey1 = EthECKey.RecoverFromSignature(ethECDSA, messageDigest.HexToByteArray()).GetPubKey().ToHex();//消息摘要，签名，
+            Assert.Equal("0480d9d565daa746fa9a9e05926c35789a6fe4f678ef8e4459dcca0fe7a1f441bc0d41d5f039b2cac4c3fca27943fa99f7125a6a677146160308fdee89dd56a637", pubKey1);//公钥验签成功
+
+            #region 基础一些测试
+            var data = "0x" + tempSign.R.ToHex().PadLeft(64, '0') +
+                  tempSign.S.ToHex().PadLeft(64, '0');
+            var signString = data + tempSign.V.ToHex();
+            var indexValue = signString.HexToByteArray()[64];//如果 indexValue 等0或者1 需要+27
+            var vData = new[] { indexValue }.ToHex();
+            var pubKey = EthECKey.RecoverFromSignature(tempSign, messageDigest.HexToByteArray()).GetPubKey().ToHex();//消息摘要，签名，得到公钥, //计算得到公钥和用户公钥相等，说明签名成功;
+
+            Assert.Equal(pubKey, pubKey1);
+            Assert.Equal("cebeeb806b602b6b1661ce60d78ee8597cb7799adf4c153e0a52386b8d393fcd4e2b732bd3637f55e09aacfd1c5b1fd27be0b50c5a857ad35b76ce5a2450520b01", signature); 
+            #endregion
+        }
     }
 }
