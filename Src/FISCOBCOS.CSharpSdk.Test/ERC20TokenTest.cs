@@ -163,13 +163,13 @@ namespace FISCOBCOS.CSharpSdk.Test
         [Fact]
         public async Task GetTransLogAysncTest()
         {
-            string contractAddress = "0x36760f384f697707917fdb828e52e065a0619319";//上面测试部署合约得到合约地址
+            string contractAddress = "0x48abfb814883ad2d91c0bbc2801d41106ddc8017";//上面测试部署合约得到合约地址
             string issuerAddress = "0xf827414cb1c39787d50bcebe534abe1ed2d5619f";//发起方的地址
             var tempUserAddress = "0x4d1a493a93effee00171b0b9c96fc3d62066febf";//接受转账的用户地址
             var tempPrivateKey = "0x" + "3d3b37d27af1fe316f44913363e6edfa9fabf95f70f6e0754fdeedcd619ab651";
             var tempContractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var tempInputsParameters = new[] { BuildParams.CreateParam("address", "account") };
-            var tempParamsValue = new object[] { tempUserAddress };
+            var tempParamsValue = new object[] { issuerAddress };
             string tempFunctionName = "getTransLogs";//调用合约方法
 
             //2、测试查询交易
@@ -185,6 +185,7 @@ namespace FISCOBCOS.CSharpSdk.Test
             var sendList = tempOutputList[0].Result.ToJson().ToObject<List<string>>();
             var receiveList = tempOutputList[1].Result.ToJson().ToObject<List<string>>();
             var typeList = tempOutputList[2].Result.ToJson().ToObject<List<Byte[]>>();
+
             var tempTypeList = new List<String>();
 
             foreach (var i in typeList)
@@ -228,6 +229,9 @@ namespace FISCOBCOS.CSharpSdk.Test
 
         [Parameter("uint256[]", 4)]
         public List<BigInteger> AmountList { get; set; }
+        [Parameter("uint256[]", 5)]
+        public List<BigInteger> BalanceList { get; set; }
+
 
 
     }

@@ -1,4 +1,5 @@
 ﻿using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.KeyStore.Crypto;
 using Nethereum.RLP;
 using Nethereum.Signer;
 using Nethereum.Util;
@@ -76,7 +77,7 @@ namespace FISCOBCOS.CSharpSdk.Test
         /// ECDSA 签名，通过原始数据，解析得到公钥和原始公钥进行比对
         /// </summary>
         [Fact]
-        public void ShouldRecover()
+        public void ShouldECDSASignWithRecover()
         {
 
             string privateKey = "0x95b2de506d7f63be7d28ff76e1a6d2ee12ed28b2f1d929f48ecf92dc0c4ba743";//私钥
@@ -102,8 +103,34 @@ namespace FISCOBCOS.CSharpSdk.Test
             var pubKey = EthECKey.RecoverFromSignature(tempSign, messageDigest.HexToByteArray()).GetPubKey().ToHex();//消息摘要，签名，得到公钥, //计算得到公钥和用户公钥相等，说明签名成功;
 
             Assert.Equal(pubKey, pubKey1);
-            Assert.Equal("cebeeb806b602b6b1661ce60d78ee8597cb7799adf4c153e0a52386b8d393fcd4e2b732bd3637f55e09aacfd1c5b1fd27be0b50c5a857ad35b76ce5a2450520b01", signature); 
+            Assert.Equal("cebeeb806b602b6b1661ce60d78ee8597cb7799adf4c153e0a52386b8d393fcd4e2b732bd3637f55e09aacfd1c5b1fd27be0b50c5a857ad35b76ce5a2450520b01", signature);
             #endregion
+        }
+
+        /// <summary>
+        /// 添加keccak 256 和sha256 匹配以太坊，和bcos
+        /// </summary>
+        [Fact]
+        public void HashTest()
+
+        {
+
+            var keccak = new Sha3Keccack();
+            var result = keccak.CalculateHashFromHex(
+                "0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
+                "0x0d57c7d8b54ebf963f94cded8a57a1b109ac7465ada218575473648bf373b90d");
+
+            string testKey = "352203199105173710林宣名&352203199105173710林宣名&352203199105173710林宣名";//计算得到hash  bytes 32
+            var result1 = keccak.CalculateHash(testKey);
+            string actualStr = "0x03b4e6ca8acc9b14f1674ebf6af70c5f33d5d582f3d7581d59c7fda49c9ba83e";
+            var length = actualStr.HexToByteArray().Length;//32
+            Assert.Equal("0x" + result1, actualStr);
+
+            KeyStoreCrypto keyStoreCrypto = new KeyStoreCrypto();
+            var sha256Key = keyStoreCrypto.CalculateSha256Hash(Encoding.UTF8.GetBytes(testKey)).ToHex();
+            Assert.Equal("0x37378082a60708c400e4ad3fdaeb49248b495c764a5fa9c2bd988fe52b713b9a", "0x" + sha256Key);
+            Assert.Equal("13265b3c8b785f6715b215cb1e6869312588a03afe0076beda8042c2ceb5603b", result);
+
         }
     }
 }

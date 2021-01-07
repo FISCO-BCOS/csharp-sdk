@@ -17,13 +17,15 @@ contract ERC20 is IERC20 {
   uint256 private _totalSupply;
 
   mapping(address=>uint256)public newestKeyIndex;
-  mapping (address => mapping (uint256 => transOjbect)) private _accountTransLogs;
+  mapping (address => mapping (uint256 => transObject)) private _accountTransLogs;
 
-  struct transOjbect { 
-   address send;
-   address receive;
+  struct transObject { 
+   address sender;
+   address receiver;
    bytes32 typeName;
    uint256 amount;
+   uint256 balance;
+   uint256 blockNumber;
   }
   /**
   * @dev Total number of tokens in existence
@@ -59,20 +61,50 @@ contract ERC20 is IERC20 {
     return _allowed[owner][spender];
   }
 
-  function getTransLogs(address account)public view returns(address[] memory,address[] memory,bytes32[] memory,uint256[] memory){
-       address[] memory sendList = new address[](uint256(newestKeyIndex[account]));
-       address[] memory receiveList = new address[](uint256(newestKeyIndex[account]));
+  //这一个随着数据量大，会爆发，废弃
+  function getTransLogs(address account)public view returns(address[] memory,address[] memory,bytes32[] memory,uint256[] memory,uint256[] memory){
+       address[] memory senderList = new address[](uint256(newestKeyIndex[account]));
+       address[] memory receiverList = new address[](uint256(newestKeyIndex[account]));
        bytes32[] memory typeNameList = new bytes32[](uint256(newestKeyIndex[account]));
        uint256[] memory amountList = new uint256[](uint256(newestKeyIndex[account]));
+       uint256[] memory  balanceList = new uint256[](uint256(newestKeyIndex[account]));
         for(uint256  i=0;i<newestKeyIndex[account];++i){
-           sendList[i]=_accountTransLogs[account][i+1].send;
-           receiveList[i]=_accountTransLogs[account][i+1].receive;
+           senderList[i]=_accountTransLogs[account][i+1].sender;
+           receiverList[i]=_accountTransLogs[account][i+1].receiver;
            typeNameList[i]=_accountTransLogs[account][i+1].typeName;
            amountList[i]=_accountTransLogs[account][i+1].amount;
+           balanceList[i]=_accountTransLogs[account][i+1].balance;
       }
-       return (sendList,receiveList,typeNameList,amountList);
+       return (senderList,receiverList,typeNameList,amountList,balanceList);
   
   }
+    //获取最近一次交易索引
+     function getLastestTransIndex(address account)public view returns(uint256){
+          return newestKeyIndex[account];
+     }
+     //获取指定索引的交易
+    function getIndexTransLogs(address account,uint256 indexKey)public view returns(address,address,bytes32,uint256,uint256){
+     address tempSender= _accountTransLogs[account][indexKey].sender;
+     address tempReceiver= _accountTransLogs[account][indexKey].receiver;
+     bytes32 tempTypeName=_accountTransLogs[account][indexKey].typeName;
+     uint256 tempAmount=_accountTransLogs[account][indexKey].amount;
+     uint256 tempBalance=_accountTransLogs[account][indexKey].balance;
+     return(tempSender,tempReceiver,tempTypeName,tempAmount,tempBalance);
+    }
+  
+  //记录交易
+   function setTransRecord(address owner,address from,address to,uint256 amount,bytes32 typeName) internal{
+         _accountTransLogs[owner][newestKeyIndex[owner]+1].sender=from;
+         _accountTransLogs[owner][newestKeyIndex[owner]+1].receiver=to;
+         _accountTransLogs[owner][newestKeyIndex[owner]+1].typeName=typeName;
+         _accountTransLogs[owner][newestKeyIndex[owner]+1].amount=amount;
+         if((typeName=="初始发行"||typeName=="增加")&&to==owner){
+          _accountTransLogs[owner][newestKeyIndex[owner]+1].balance= _accountTransLogs[owner][newestKeyIndex[owner]].balance+amount;
+         }else if((typeName=="扣除"||typeName=="销毁")&& from==owner){
+           _accountTransLogs[owner][newestKeyIndex[owner]+1].balance= _accountTransLogs[owner][newestKeyIndex[owner]].balance-amount;
+         }
+         newestKeyIndex[owner]=newestKeyIndex[owner]+1;
+         } 
 
   /**
   * @dev Transfer token for a specified address
@@ -83,22 +115,10 @@ contract ERC20 is IERC20 {
     require(value <= _balances[msg.sender]);
     require(to != address(0));
 
-    _balances[msg.sender] = _balances[msg.sender].sub(value);
-    _balances[to] = _balances[to].add(value);
-
-         _accountTransLogs[msg.sender][newestKeyIndex[msg.sender]+1].send=msg.sender;
-         _accountTransLogs[msg.sender][newestKeyIndex[msg.sender]+1].receive=to;
-         _accountTransLogs[msg.sender][newestKeyIndex[msg.sender]+1].typeName="扣除";
-         _accountTransLogs[msg.sender][newestKeyIndex[msg.sender]+1].amount=value;
-        newestKeyIndex[msg.sender]=newestKeyIndex[msg.sender]+1;
-        
-         _accountTransLogs[to][newestKeyIndex[to]+1].send=msg.sender;
-         _accountTransLogs[to][newestKeyIndex[to]+1].receive=to;
-         _accountTransLogs[to][newestKeyIndex[to]+1].typeName="增加";
-         _accountTransLogs[to][newestKeyIndex[to]+1].amount=value;
-        newestKeyIndex[to]=newestKeyIndex[to]+1;
-    
-   
+        _balances[msg.sender] = _balances[msg.sender].sub(value);
+        _balances[to] = _balances[to].add(value);
+        setTransRecord(msg.sender,msg.sender,to,value,"扣除");
+        setTransRecord(to,msg.sender,to,value,"增加");
     emit Transfer(msg.sender, to, value);
     return true;
   }
@@ -141,6 +161,9 @@ contract ERC20 is IERC20 {
     _balances[from] = _balances[from].sub(value);
     _balances[to] = _balances[to].add(value);
     _allowed[from][msg.sender] = _allowed[from][msg.sender].sub(value);
+
+           setTransRecord(from,from,to,value,"扣除");
+           setTransRecord(to,from,to,value,"增加");
     emit Transfer(from, to, value);
     return true;
   }
@@ -204,10 +227,10 @@ contract ERC20 is IERC20 {
     require(account!= address(0));
     _totalSupply = _totalSupply.add(amount);
     _balances[account] = _balances[account].add(amount);
-   
+    setTransRecord(account,address(0),account,amount,"初始发行");
     emit Transfer(address(0), account, amount);
   }
-
+        
   /**
    * @dev Internal function that burns an amount of the token of a given
    * account.
@@ -220,6 +243,7 @@ contract ERC20 is IERC20 {
 
     _totalSupply = _totalSupply.sub(amount);
     _balances[account] = _balances[account].sub(amount);
+     setTransRecord(account,account,address(0),amount,"销毁");
     emit Transfer(account, address(0), amount);
   }
 
