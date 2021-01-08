@@ -197,7 +197,7 @@ namespace FISCOBCOS.CSharpSdkTest
             var eventpramas2 = eventList[0].Event.Find(x => x.Parameter.Name == "operationTimeStamp");
             Assert.True(eventpramas1.Result.ToString() == "123");
             Assert.NotNull(eventpramas2.Result);
-
+            
 
         }
 

@@ -27,6 +27,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestData\abiSol\bin\QTest-sol-output.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\abiSol\bin\QTest.abi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\abiSol\bin\QTest.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\abiSol\bin\QTest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\abiSol\QTest.sol">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\DefaultTest.abi">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
