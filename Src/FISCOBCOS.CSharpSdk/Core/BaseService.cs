@@ -131,19 +131,26 @@ namespace FISCOBCOS.CSharpSdk.Core
             var blockNumber = GetBlockNumber();
             var resultData = "";
             ConstructorCallEncoder _constructorCallEncoder = new ConstructorCallEncoder();
-            if (values == null || values.Length == 0)
-                resultData = _constructorCallEncoder.EncodeRequest(binCode, "");
 
             var des = new ABIDeserialiser();
             var contract = des.DeserialiseContract(abi);
-            if (contract.Constructor == null)
-                throw new Exception(
-                    "Parameters supplied for a constructor but ABI does not contain a constructor definition");
-            resultData = _constructorCallEncoder.EncodeRequest(binCode,
+            if (contract.Constructor != null)
+            {
+                if (values != null)
+                {
+                    resultData = _constructorCallEncoder.EncodeRequest(binCode,
          contract.Constructor.InputParameters, values);
-
+                }
+                else
+                {
+                    resultData = _constructorCallEncoder.EncodeRequest(binCode, "");
+                }
+            }
+            else
+            {
+                resultData = binCode;
+            }
             var transParams = BuildTransactionParams(resultData, blockNumber, "");
-
             var tx = BuildRLPTranscation(transParams);
             tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
             var result = SendRequest<object>(tx.Data, tx.Signature);
@@ -160,7 +167,7 @@ namespace FISCOBCOS.CSharpSdk.Core
         /// <returns>交易回执</returns>
         public ReceiptResultDto DeployContractWithReceipt(string binCode, string abi = null, params object[] values)
         {
-            var txHash = DeployContract(binCode,abi,values);
+            var txHash = DeployContract(binCode, abi, values);
             var receiptResult = GetTranscationReceipt(txHash);
             return receiptResult;
         }
@@ -238,7 +245,7 @@ namespace FISCOBCOS.CSharpSdk.Core
                 var functionCallEncoder = new FunctionCallEncoder();
                 var funcData = functionCallEncoder.EncodeRequest(sha3Signature, inputsParameters,
                     value);
-                callDto.Data =  funcData;
+                callDto.Data = funcData;
             }
 
             var request = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.Call, new object[] { this._requestObjectId, callDto });

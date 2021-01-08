@@ -27,6 +27,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestData\abiSol\AbiEncode.sol">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\abiSol\bin\AbiEncode-sol-output.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\abiSol\bin\AbiEncode.abi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\abiSol\bin\AbiEncode.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\abiSol\bin\AbiEncode.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestData\abiSol\bin\QTest-sol-output.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

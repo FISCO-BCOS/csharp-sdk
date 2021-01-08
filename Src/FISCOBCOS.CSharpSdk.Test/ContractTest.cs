@@ -76,7 +76,7 @@ namespace FISCOBCOS.CSharpSdkTest
         public void DeployContractWithReceiptTest()
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            var result =  contractService.DeployContractWithReceipt(binCode);
+            var result =  contractService.DeployContractWithReceipt(binCode,abi);
             Assert.NotNull(result.ContractAddress);//0x149d743274d91eeea8f646901fc8dd79551dccda
         }
 
@@ -89,7 +89,7 @@ namespace FISCOBCOS.CSharpSdkTest
         {
 
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            string contractAddress = "0x149d743274d91eeea8f646901fc8dd79551dccda";//上面测试部署合约得到合约地址
+            string contractAddress = "0x08b43812e0e180fbab406c7d1db5fd09a88e341f";//上面测试部署合约得到合约地址
             var inputsParameters = new[] { BuildParams.CreateParam("string", "n") };
             var paramsValue = new object[] { "123" };
             string functionName = "set";//调用合约方法
