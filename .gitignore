@@ -14,10 +14,14 @@
 /Src/FISCOBCOS.CSharpSdk/obj
 /Src/FISCOBCOS.CSharpSdk.Test/bin
 /Src/FISCOBCOS.CSharpSdk.Test/obj
+/README.en.md
+/README.zh.md
+/FISCOBCOS.CSharpSdk.bak
+/.gitee
+/TestResults/FISCOBCOS.CSharpSdkTest.AccountTest.GeneratorAccountTest-2021-01-06 11_37_26.vsp
 /Doc
+/Src/FISCOBCOS.CSharpSdk.Test/TestData/abiSol
+/Src/FISCOBCOS.CSharpSdk.Test/TestData/erc20
 /Src/FISCOBCOS.CSharpSdk.Test/ERC20TokenTest.cs
 /Src/FISCOBCOS.CSharpSdk.Test/SignTest.cs
-/Src/FISCOBCOS.CSharpSdk.Test/TestData/erc20.zip
-/Src/FISCOBCOS.CSharpSdk.Test/TestData/logs.json
-/Src/FISCOBCOS.CSharpSdk.Test/TestData/erc20
-/.gitee
+/Src/FISCOBCOS.CSharpSdk.Test/AbiTest.cs

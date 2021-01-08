@@ -52,17 +52,25 @@ namespace FISCOBCOS.CSharpSdk
             var blockNumber = await GetBlockNumberAsync();
             var resultData = "";
             ConstructorCallEncoder _constructorCallEncoder = new ConstructorCallEncoder();
-            if (values == null || values.Length == 0)
-                resultData = _constructorCallEncoder.EncodeRequest(binCode, "");
 
             var des = new ABIDeserialiser();
             var contract = des.DeserialiseContract(abi);
-            if (contract.Constructor == null)
-                throw new Exception(
-                    "Parameters supplied for a constructor but ABI does not contain a constructor definition");
-            resultData = _constructorCallEncoder.EncodeRequest(binCode,
+            if (contract.Constructor != null)
+            {
+                if (values != null)
+                {
+                    resultData = _constructorCallEncoder.EncodeRequest(binCode,
          contract.Constructor.InputParameters, values);
-
+                }
+                else
+                {
+                    resultData = _constructorCallEncoder.EncodeRequest(binCode, "");
+                }
+            }
+            else
+            {
+                resultData = binCode;
+            }
             var transParams = BuildTransactionParams(resultData, blockNumber, "");
             var tx = BuildRLPTranscation(transParams);
             tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
