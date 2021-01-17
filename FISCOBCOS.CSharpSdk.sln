@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FISCOBCOS.CSharpSdk", "Src\FISCOBCOS.CSharpSdk\FISCOBCOS.CSharpSdk.csproj", "{E65D9EAC-E71B-495E-8562-56731D0F73E4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FISCOBCOS.CSharpSdk.Test", "Src\FISCOBCOS.CSharpSdk.Test\FISCOBCOS.CSharpSdk.Test.csproj", "{93E3F652-EBEE-4F22-B7A0-17C889396124}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FISCOBCOS.CSharpSdk.Test", "Src\FISCOBCOS.CSharpSdk.Test\FISCOBCOS.CSharpSdk.Test.csproj", "{F6E685ED-B41F-4BFE-881E-83C30B9575BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{E65D9EAC-E71B-495E-8562-56731D0F73E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E65D9EAC-E71B-495E-8562-56731D0F73E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E65D9EAC-E71B-495E-8562-56731D0F73E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{93E3F652-EBEE-4F22-B7A0-17C889396124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93E3F652-EBEE-4F22-B7A0-17C889396124}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93E3F652-EBEE-4F22-B7A0-17C889396124}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93E3F652-EBEE-4F22-B7A0-17C889396124}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6E685ED-B41F-4BFE-881E-83C30B9575BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6E685ED-B41F-4BFE-881E-83C30B9575BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6E685ED-B41F-4BFE-881E-83C30B9575BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6E685ED-B41F-4BFE-881E-83C30B9575BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

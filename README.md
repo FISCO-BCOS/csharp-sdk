@@ -41,7 +41,7 @@ FISCOBCOS C# Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual Stu
 
 #### 安装教程
 
-1.  下载源码，vs2019 nuget包还原; 或使用 nuget包安装，安装命令如下： Install-Package FISCOBCOS.CSharpSdk -Version 1.0.0.4
+1. 下载源码，vs2019 nuget包还原; 或使用 nuget包安装，安装命令如下： Install-Package FISCOBCOS.CSharpSdk -Version 1.0.0.4
 2. vs code 安装solidity 插件，在vs code创建一个文件夹存放原始sol合约。
 3. vs code 按 F5 执行编译命令 “compile current Solidity contract”,会生成合约对应的abi和bin。
 4. 将上面编译得到abi和bin 放到你的项目中，进行相关操作。
@@ -56,6 +56,11 @@ FISCOBCOS C# Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual Stu
 3. ContractService 主要是合约调用等操作封装，详细看对应的单元测试中的ContractTest.cs。
 4. QueryApiService是底层非交易的Json RPC API 封装，可参考单元测试ApiServiceTest.cs。
 备注：通用的Json RPC API 相对简单，没有封装对应的DTO 实体，操作时候可以通过在线json 生成实体进行业务结合。
+
+#### 新增特性
+1. 新增助记词、钱包模块
+2、新增BIP 32、新增EIP 55 等特性
+
 
 #### 迭代计划
 
