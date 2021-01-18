@@ -3,6 +3,9 @@ using FISCOBCOS.CSharpSdk.Core;
 using FISCOBCOS.CSharpSdk.Dto;
 using FISCOBCOS.CSharpSdk.Utils;
 using FISCOBCOS.CSharpSdk.Utis;
+using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Signer;
+using Nethereum.Util;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -47,10 +50,10 @@ namespace FISCOBCOS.CSharpSdkTest
         public void DeployContractTest()
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            var txHash =  contractService.DeployContract(binCode);
+            var txHash = contractService.DeployContract(binCode);
             //0x1fbfad279a915d51e4dd14a6d22cf8a437eafbd666e8a880d99d055b57f48b03
             Assert.NotNull(txHash);
-           
+
         }
 
         /// <summary>
@@ -62,10 +65,9 @@ namespace FISCOBCOS.CSharpSdkTest
         {
             string txHash = "0x1fbfad279a915d51e4dd14a6d22cf8a437eafbd666e8a880d99d055b57f48b03";
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            var result =  contractService.GetTranscationReceipt(txHash);
-
+            var result = contractService.GetTranscationReceipt(txHash);
             Assert.NotNull(result.ContractAddress);
-           
+
         }
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace FISCOBCOS.CSharpSdkTest
         public void DeployContractWithReceiptTest()
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            var result =  contractService.DeployContractWithReceipt(binCode,abi);
+            var result = contractService.DeployContractWithReceipt(binCode, abi);
             Assert.NotNull(result.ContractAddress);//0x149d743274d91eeea8f646901fc8dd79551dccda
         }
 
@@ -93,7 +95,7 @@ namespace FISCOBCOS.CSharpSdkTest
             var inputsParameters = new[] { BuildParams.CreateParam("string", "n") };
             var paramsValue = new object[] { "123" };
             string functionName = "set";//调用合约方法
-            ReceiptResultDto receiptResultDto =  contractService.SendTranscationWithReceipt(abi, contractAddress, functionName, inputsParameters, paramsValue);
+            ReceiptResultDto receiptResultDto = contractService.SendTranscationWithReceipt(abi, contractAddress, functionName, inputsParameters, paramsValue);
             Assert.NotEmpty(receiptResultDto.Output);
             Assert.NotEmpty(receiptResultDto.Input);
             Assert.NotEmpty(receiptResultDto.Logs);
@@ -121,7 +123,7 @@ namespace FISCOBCOS.CSharpSdkTest
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             string contractAddress = "0x149d743274d91eeea8f646901fc8dd79551dccda";//上面测试部署合约得到合约地址
             string functionName = "get";
-            var result =  contractService.CallRequest(contractAddress, abi, functionName);
+            var result = contractService.CallRequest(contractAddress, abi, functionName);
             var solidityAbi = new SolidityABI(abi);
             var outputList = solidityAbi.OutputDecode(functionName, result.Output);
             Assert.NotNull(outputList);
@@ -164,7 +166,7 @@ namespace FISCOBCOS.CSharpSdkTest
         public async Task DeployContractWithReceiptAsyncTest()
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            var result = await contractService.DeployContractWithReceiptAsync(binCode);
+            var result = await contractService.DeployContractWithReceiptAsync(binCode, abi);
             Assert.NotNull(result.ContractAddress);//0x149d743274d91eeea8f646901fc8dd79551dccda
         }
 
@@ -197,7 +199,7 @@ namespace FISCOBCOS.CSharpSdkTest
             var eventpramas2 = eventList[0].Event.Find(x => x.Parameter.Name == "operationTimeStamp");
             Assert.True(eventpramas1.Result.ToString() == "123");
             Assert.NotNull(eventpramas2.Result);
-            
+
 
         }
 
@@ -217,6 +219,7 @@ namespace FISCOBCOS.CSharpSdkTest
             Assert.NotNull(outputList);
             Assert.True(outputList[0].Result.ToString() == "123");
         }
+
 
     }
 }
