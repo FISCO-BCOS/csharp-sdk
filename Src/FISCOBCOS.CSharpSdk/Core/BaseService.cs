@@ -14,6 +14,7 @@ using Nethereum.Signer;
 using Nethereum.Web3.Accounts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -213,8 +214,22 @@ namespace FISCOBCOS.CSharpSdk.Core
         public ReceiptResultDto GetTranscationReceipt(string tanscationHash)
         {
             var rpcRequest = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, tanscationHash });
-            var result = HttpUtils.RpcPost<ReceiptResultDto>(this._url, rpcRequest);
-            return result;
+            ReceiptResultDto receiptResultDto = new ReceiptResultDto();
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            long times = 0;
+            while (string.IsNullOrWhiteSpace(receiptResultDto.BlockHash))
+            {
+                receiptResultDto = HttpUtils.RpcPost<ReceiptResultDto>(this._url, rpcRequest);
+                times += sw.ElapsedMilliseconds;
+                if (string.IsNullOrWhiteSpace(receiptResultDto.BlockHash) && times > 10000)
+                {
+                    sw.Stop();
+                    throw new Exception("获取交易回执超时!");
+                }
+            }
+
+            return receiptResultDto;
         }
 
         /// <summary>

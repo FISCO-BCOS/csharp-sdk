@@ -16,6 +16,7 @@ using Nethereum.Util;
 using Nethereum.Web3.Accounts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -137,10 +138,21 @@ namespace FISCOBCOS.CSharpSdk
         {
             var request = new RpcRequest(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, tanscationHash });
             var getRequest = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, tanscationHash });
-            //var result = await HttpUtils.RpcPost<ReceiptResultDto>(BaseConfig.DefaultUrl, getRequest);
-            var result = await this._rpcClient.SendRequestAsync<ReceiptResultDto>(request);
-            if (result == null) throw new Exception(" 获取交易回执方法报空：" + result.ToJson());
-            return result;
+            ReceiptResultDto receiptResultDto = new ReceiptResultDto();
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            long times = 0;
+            while (string.IsNullOrWhiteSpace(receiptResultDto.BlockHash))
+            {
+                receiptResultDto = await this._rpcClient.SendRequestAsync<ReceiptResultDto>(request);
+                times += sw.ElapsedMilliseconds;
+                if (string.IsNullOrWhiteSpace(receiptResultDto.BlockHash) && times > 10000)
+                {
+                    sw.Stop();
+                    throw new Exception("获取交易回执超时!");
+                }
+            }
+            return receiptResultDto;
         }
 
         /// <summary>
