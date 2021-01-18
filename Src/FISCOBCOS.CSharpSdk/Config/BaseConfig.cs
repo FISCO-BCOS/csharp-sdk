@@ -10,7 +10,7 @@ namespace FISCOBCOS.CSharpSdk
         /// 链上jsonapi 通信地址 通常是ip：8545端口
         /// </summary>       
         public static string DefaultUrl = "";
-       
+
         /// <summary>
         /// 默认链Id
         /// </summary>
@@ -49,5 +49,10 @@ namespace FISCOBCOS.CSharpSdk
         /// 默认交易参数Value
         /// </summary>
         public static int DefaultTranscationsValue = 0;
+
+        /// <summary>
+        /// 默认过期时间 （毫秒）
+        /// </summary>
+        public static int DefaultExpirationTime = 8000;
     }
 }

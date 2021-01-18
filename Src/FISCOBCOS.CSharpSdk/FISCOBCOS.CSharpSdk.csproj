@@ -4,11 +4,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>林宣名</Authors>
-    <Version>1.0.0.5</Version>
+    <Version>1.0.0.6</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <NeutralLanguage>zh</NeutralLanguage>
     <PackageIcon>fiscobcos_logo.png</PackageIcon>
-    <Description>FISCOBCOS BlockChain CSharpSdk</Description>
+    <Description>Optimize the transaction receipt, add wallet module, mnemonic words, etc</Description>
     <PackageId>FISCOBCOS.CSharpSdk</PackageId>
     <Product>FISCOBCOS.CSharpSdk</Product>
     <AssemblyName>FISCOBCOS.CSharpSdk</AssemblyName>

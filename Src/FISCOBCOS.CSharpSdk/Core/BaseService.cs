@@ -14,6 +14,7 @@ using Nethereum.Signer;
 using Nethereum.Web3.Accounts;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -210,11 +211,28 @@ namespace FISCOBCOS.CSharpSdk.Core
         /// </summary>
         /// <param name="tanscationHash">交易Hash</param>
         /// <returns></returns>
-        public ReceiptResultDto GetTranscationReceipt(string tanscationHash)
+        public ReceiptResultDto GetTranscationReceipt(string transcationHash)
         {
-            var rpcRequest = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, tanscationHash });
-            var result = HttpUtils.RpcPost<ReceiptResultDto>(this._url, rpcRequest);
-            return result;
+            var rpcRequest = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, transcationHash });
+            ReceiptResultDto receiptResultDto = new ReceiptResultDto();
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            long times = 0;
+            while (true)
+            {
+                receiptResultDto = HttpUtils.RpcPost<ReceiptResultDto>(this._url, rpcRequest);
+                times += sw.ElapsedMilliseconds;
+                if (times > BaseConfig.DefaultExpirationTime)
+                {
+                    sw.Stop();
+                    throw new Exception("获取交易回执超时!");
+
+                }
+                if (receiptResultDto != null) break;
+
+            }
+
+            return receiptResultDto;
         }
 
         /// <summary>
@@ -230,7 +248,6 @@ namespace FISCOBCOS.CSharpSdk.Core
             callDto.From = new Account(this._privateKey).Address.ToLower();//address ;
             callDto.To = contractAddress;
             var contractAbi = new ABIDeserialiser().DeserialiseContract(abi);
-
             callDto.Value = new HexBigInteger(0);
             var function = contractAbi.Functions.FirstOrDefault(x => x.Name == callFunctionName);
 
@@ -247,7 +264,6 @@ namespace FISCOBCOS.CSharpSdk.Core
                     value);
                 callDto.Data = funcData;
             }
-
             var request = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.Call, new object[] { this._requestObjectId, callDto });
             var result = HttpUtils.RpcPost<ReceiptResultDto>(this._url, request); ;
 
