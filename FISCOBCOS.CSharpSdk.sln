@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FISCOBCOS.CSharpSdk", "Src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FISCOBCOS.CSharpSdk.Test", "Src\FISCOBCOS.CSharpSdk.Test\FISCOBCOS.CSharpSdk.Test.csproj", "{F6E685ED-B41F-4BFE-881E-83C30B9575BE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTest", "Src\ConsoleTest\ConsoleTest.csproj", "{9EA9ABFD-2011-4A31-8D11-1B11BC3404E1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedisSubClient", "Src\RedisSubClient\RedisSubClient.csproj", "{CE0068FD-817F-4B6A-A53B-97E35BE46F78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{F6E685ED-B41F-4BFE-881E-83C30B9575BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6E685ED-B41F-4BFE-881E-83C30B9575BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6E685ED-B41F-4BFE-881E-83C30B9575BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EA9ABFD-2011-4A31-8D11-1B11BC3404E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EA9ABFD-2011-4A31-8D11-1B11BC3404E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EA9ABFD-2011-4A31-8D11-1B11BC3404E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EA9ABFD-2011-4A31-8D11-1B11BC3404E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE0068FD-817F-4B6A-A53B-97E35BE46F78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE0068FD-817F-4B6A-A53B-97E35BE46F78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE0068FD-817F-4B6A-A53B-97E35BE46F78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE0068FD-817F-4B6A-A53B-97E35BE46F78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

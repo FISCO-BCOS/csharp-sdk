@@ -25,3 +25,7 @@
 /Src/FISCOBCOS.CSharpSdk.Test/ERC20TokenTest.cs
 /Src/FISCOBCOS.CSharpSdk.Test/SignTest.cs
 /Src/FISCOBCOS.CSharpSdk.Test/AbiTest.cs
+/Src/RedisSubClient/obj
+/Src/RedisSubClient/bin
+/Src/ConsoleTest/obj
+/Src/ConsoleTest/bin
