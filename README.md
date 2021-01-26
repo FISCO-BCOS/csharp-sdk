@@ -55,12 +55,15 @@ FISCOBCOS C# Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual Stu
 2. 使用ContractService 和QueryApiService进行相关业务操作。
 3. ContractService 主要是合约调用等操作封装，详细看对应的单元测试中的ContractTest.cs。
 4. QueryApiService是底层非交易的Json RPC API 封装，可参考单元测试ApiServiceTest.cs。
+5. 如果使用redis 发布订阅，请参考ConsoleTest 项目中的RedisThreadWorkTest，开启多个RedisSubClient 项目进行订阅。
+
 备注：通用的Json RPC API 相对简单，没有封装对应的DTO 实体，操作时候可以通过在线json 生成实体进行业务结合。
 
 #### 新增特性
 1. 新增助记词、钱包模块
 2. 新增BIP 32、新增EIP 55 等特性
 3. 优化获取交易回执
+4、新增线程池拉取指定区块交易，新增Redis订阅发布
 
 #### 迭代计划
 
