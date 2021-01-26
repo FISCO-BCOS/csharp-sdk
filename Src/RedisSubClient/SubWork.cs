@@ -21,7 +21,6 @@ namespace RedisSubClient
             db = connection.GetDatabase(1);//订阅存储地方的数据
             ISubscriber sub = connection.GetSubscriber();
 
-            //订阅名为 RedisRegisterEventSub 的通道
             sub.Subscribe("RedisTranscationInfoSub", (channel, message) =>
             {
                 var localProcess = Process.GetCurrentProcess();
