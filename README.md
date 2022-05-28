@@ -41,6 +41,8 @@ FISCOBCOS C# Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual Stu
 
 #### 安装教程
 
+备注：也可以使用webase-front 区块链中间件导出合约获得abi和bin文件。
+
 1. 下载源码，vs2019 nuget包还原; 或使用 nuget包安装，安装命令如下： Install-Package FISCOBCOS.CSharpSdk -Version 1.0.0.6
 2. vs code 安装solidity 插件，在vs code创建一个文件夹存放原始sol合约。
 3. vs code 按 F5 执行编译命令 “compile current Solidity contract”,会生成合约对应的abi和bin。
@@ -48,6 +50,8 @@ FISCOBCOS C# Sdk 采用 net core 3.1,配套开发工具是vs Code 和 Visual Stu
 
 参考：
 ![vs Code 编译合约说明](https://github.com/FISCO-BCOS/csharp-sdk/blob/master/Img/how-to-use-console-generator1.gif)
+
+
 
 #### 使用说明
 
