@@ -12,18 +12,18 @@ using Xunit.Abstractions;
 
 namespace FISCOBCOS.CSharpSdkTest
 {
-    public class ContractTest
+    public class TraceEvidenceContractTest
     {
         public string privateKey = "";
         string binCode = "";
         string abi = "";
 
-        public ContractTest()
+        public TraceEvidenceContractTest()
         {
 
             this.privateKey = "0x25aa95ed437f8efaf37cf849a5a6ba212308d5d735105e03e38410542bf1d5ff";
-            bool getAbiState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TestData\\" + "DefaultTest.abi", out abi);
-            bool getBinCodeState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TestData\\" + "DefaultTest.bin", out binCode);
+            bool getAbiState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TraceEvidence\\" + "EvidenceConV1.abi", out abi);
+            bool getBinCodeState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TraceEvidence\\" + "EvidenceConV1.bin", out binCode);
 
         }
 
@@ -89,16 +89,19 @@ namespace FISCOBCOS.CSharpSdkTest
         {
 
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            string contractAddress = "0x149d743274d91eeea8f646901fc8dd79551dccda";//上面测试部署合约得到合约地址
-            var inputsParameters = new[] { BuildParams.CreateParam("string", "n") };
-            var paramsValue = new object[] { "123" };
-            string functionName = "set";//调用合约方法
+            string contractAddress = "0x196bcc72893d357492ff59c88631a60cf31f94d8";//上面测试部署合约得到合约地址
+            var inputsParameters = new[] { BuildParams.CreateParam("string", "serviceId"), 
+                BuildParams.CreateParam("string", "typeName"),
+                BuildParams.CreateParam("string", "dataValue") };
+            var paramsValue = new object[] { "123", "123", "123" };
+            string functionName = "registerServiceData";//调用合约方法
             ReceiptResultDto receiptResultDto =  contractService.SendTranscationWithReceipt(abi, contractAddress, functionName, inputsParameters, paramsValue);
-            Assert.NotEmpty(receiptResultDto.Output);
+           /* Assert.NotEmpty(receiptResultDto.Output);
             Assert.NotEmpty(receiptResultDto.Input);
-            Assert.NotEmpty(receiptResultDto.Logs);
+            Assert.NotEmpty(receiptResultDto.Logs);*/
             var solidityAbi = new SolidityABI(abi);
             var inputList = solidityAbi.InputDecode(functionName, receiptResultDto.Input);
+            var outputList = solidityAbi.OutputDecode(functionName, receiptResultDto.Output);
             Assert.True(inputList[0].Parameter.Name == "n" && inputList[0].Result.ToString() == "123");
 
             string eventName = "SetEvent";
@@ -168,6 +171,27 @@ namespace FISCOBCOS.CSharpSdkTest
             Assert.NotNull(result.ContractAddress);//0x149d743274d91eeea8f646901fc8dd79551dccda
         }
 
+        /// <summary>
+        /// 异步调用合约方法,本测试调用合约set方法，可以解析input和event
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task SendTranscationWithTxHashAsyncTest()
+        {
+
+            var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
+            string contractAddress = "0x196bcc72893d357492ff59c88631a60cf31f94d8";//上面测试部署合约得到合约地址
+            var inputsParameters = new[] { BuildParams.CreateParam("string", "serviceId"),
+                BuildParams.CreateParam("string", "typeName"),
+                BuildParams.CreateParam("string", "dataValue") };
+            var paramsValue = new object[] { "123", "456", "东方闪电" };
+            string functionName = "registerServiceData";//调用合约方法
+
+            string txHash= await contractService.SendTranscationWithTransHashAsync(abi, contractAddress, functionName, inputsParameters, paramsValue);
+            Assert.NotNull(txHash);
+
+
+        }
 
         /// <summary>
         /// 异步调用合约方法,本测试调用合约set方法，可以解析input和event
@@ -178,17 +202,21 @@ namespace FISCOBCOS.CSharpSdkTest
         {
 
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            string contractAddress = "0x149d743274d91eeea8f646901fc8dd79551dccda";//上面测试部署合约得到合约地址
-            var inputsParameters = new[] { BuildParams.CreateParam("string", "n") };
-            var paramsValue = new object[] { "123" };
-            string functionName = "set";//调用合约方法
+            string contractAddress = "0x196bcc72893d357492ff59c88631a60cf31f94d8";//上面测试部署合约得到合约地址
+            var inputsParameters = new[] { BuildParams.CreateParam("string", "serviceId"),
+                BuildParams.CreateParam("string", "typeName"),
+                BuildParams.CreateParam("string", "dataValue") };
+            var paramsValue = new object[] { "123", "456", "东方闪电" };
+            string functionName = "registerServiceData";//调用合约方法
+        
             ReceiptResultDto receiptResultDto = await contractService.SendTranscationWithReceiptAsync(abi, contractAddress, functionName, inputsParameters, paramsValue);
 
-            Assert.NotEmpty(receiptResultDto.Output);
+           /* Assert.NotEmpty(receiptResultDto.Output);
             Assert.NotEmpty(receiptResultDto.Input);
-            Assert.NotEmpty(receiptResultDto.Logs);
+            Assert.NotEmpty(receiptResultDto.Logs);*/
             var solidityAbi = new SolidityABI(abi);
             var inputList = solidityAbi.InputDecode(functionName, receiptResultDto.Input);
+            var outputList = solidityAbi.OutputDecode(functionName, receiptResultDto.Output);
             Assert.True(inputList[0].Parameter.Name == "n" && inputList[0].Result.ToString() == "123");
 
             string eventName = "SetEvent";
@@ -209,9 +237,12 @@ namespace FISCOBCOS.CSharpSdkTest
         public async Task CallRequestAsyncTest()
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            string contractAddress = "0x149d743274d91eeea8f646901fc8dd79551dccda";//上面测试部署合约得到合约地址
-            string functionName = "get";
-            var result = await contractService.CallRequestAsync(contractAddress, abi, functionName);
+            string contractAddress = "0x196bcc72893d357492ff59c88631a60cf31f94d8";//上面测试部署合约得到合约地址
+            string functionName = "getServiceList";
+
+            var inputsParameters = new[] { BuildParams.CreateParam("string", "serviceId") };
+            var paramsValue = new object[] { "123"};
+            var result = await contractService.CallRequestAsync(contractAddress, abi, functionName, inputsParameters,paramsValue);
             var solidityAbi = new SolidityABI(abi);
             var outputList = solidityAbi.OutputDecode(functionName, result.Output);
             Assert.NotNull(outputList);

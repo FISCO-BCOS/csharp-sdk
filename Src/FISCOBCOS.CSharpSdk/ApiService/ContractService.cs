@@ -16,7 +16,6 @@ using Nethereum.Util;
 using Nethereum.Web3.Accounts;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -53,25 +52,17 @@ namespace FISCOBCOS.CSharpSdk
             var blockNumber = await GetBlockNumberAsync();
             var resultData = "";
             ConstructorCallEncoder _constructorCallEncoder = new ConstructorCallEncoder();
+            if (values == null || values.Length == 0)
+                resultData = _constructorCallEncoder.EncodeRequest(binCode, "");
 
             var des = new ABIDeserialiser();
             var contract = des.DeserialiseContract(abi);
-            if (contract.Constructor != null)
-            {
-                if (values != null)
-                {
-                    resultData = _constructorCallEncoder.EncodeRequest(binCode,
+            if (contract.Constructor == null)
+                throw new Exception(
+                    "Parameters supplied for a constructor but ABI does not contain a constructor definition");
+            resultData = _constructorCallEncoder.EncodeRequest(binCode,
          contract.Constructor.InputParameters, values);
-                }
-                else
-                {
-                    resultData = _constructorCallEncoder.EncodeRequest(binCode, "");
-                }
-            }
-            else
-            {
-                resultData = binCode;
-            }
+
             var transParams = BuildTransactionParams(resultData, blockNumber, "");
             var tx = BuildRLPTranscation(transParams);
             tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
@@ -130,32 +121,48 @@ namespace FISCOBCOS.CSharpSdk
         }
 
         /// <summary>
+        ///异步 发送交易,返回交易回执
+        /// </summary>
+        /// <param name="abi">合约abi</param>
+        /// <param name="contractAddress">合约地址</param>
+        /// <param name="functionName">合约请求调用方法名称</param>
+        /// <param name="inputsParameters">方法对应的 参数</param>
+        /// <param name="value">请求参数值</param>
+        /// <returns>交易回执</returns>
+        public async Task<string> SendTranscationWithTransHashAsync(string abi, string contractAddress, string functionName, Parameter[] inputsParameters, params object[] value)
+        {
+            ReceiptResultDto receiptResult = new ReceiptResultDto();
+
+            var des = new ABIDeserialiser();
+            var contract = des.DeserialiseContract(abi);
+            var function = contract.Functions.FirstOrDefault(x => x.Name == functionName);
+            var sha3Signature = function.Sha3Signature;// "0x53ba0944";
+            var functionCallEncoder = new FunctionCallEncoder();
+            var result = functionCallEncoder.EncodeRequest(sha3Signature, inputsParameters,
+                value);
+            var blockNumber = await GetBlockNumberAsync();
+            var transDto = BuildTransactionParams(result, blockNumber, contractAddress);
+            var tx = BuildRLPTranscation(transDto);
+            tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
+            var txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+
+            return txHash;
+        }
+
+
+        /// <summary>
         /// 异步 获取交易回执
         /// </summary>
         /// <param name="tanscationHash">交易Hash</param>
         /// <returns></returns>
-        public async Task<ReceiptResultDto> GetTranscationReceiptAsync(string transcationHash)
+        public async Task<ReceiptResultDto> GetTranscationReceiptAsync(string tanscationHash)
         {
-            var request = new RpcRequest(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, transcationHash });
-            var getRequest = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, transcationHash });
-            ReceiptResultDto receiptResultDto = new ReceiptResultDto();
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            long times = 0;
-            while (true)
-            {
-                receiptResultDto = await this._rpcClient.SendRequestAsync<ReceiptResultDto>(request);
-                times += sw.ElapsedMilliseconds;
-                if (times > BaseConfig.DefaultExpirationTime)
-                {
-                    sw.Stop();
-                    throw new Exception("获取交易回执超时!");
-
-                }
-                if (receiptResultDto != null) break;
-
-            }
-            return receiptResultDto;
+            var request = new RpcRequest(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, tanscationHash });
+            var getRequest = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.GetTransactionReceipt, new object[] { this._requestObjectId, tanscationHash });
+            //var result = await HttpUtils.RpcPost<ReceiptResultDto>(BaseConfig.DefaultUrl, getRequest);
+            var result = await this._rpcClient.SendRequestAsync<ReceiptResultDto>(request);
+            if (result == null) throw new Exception(" 获取交易回执方法报空：" + result.ToJson());
+            return result;
         }
 
         /// <summary>

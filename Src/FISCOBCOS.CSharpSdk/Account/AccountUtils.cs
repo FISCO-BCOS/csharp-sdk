@@ -1,11 +1,9 @@
 ﻿using FISCOBCOS.CSharpSdk.Dto;
 using FISCOBCOS.CSharpSdk.Utis;
 using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using Nethereum.Web3.Accounts;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text;
 
 namespace FISCOBCOS.CSharpSdk
@@ -55,25 +53,6 @@ namespace FISCOBCOS.CSharpSdk
         {
             var accountAddress = new Account(privateKey).Address.ToLower();//address 
             return accountAddress;
-        }
-
-        /// <summary>
-        /// 获得 EIP55 地址格式
-        /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
-        public static string ConvertToChecksumAddress(string address)
-        {
-            address = address.ToLower().RemoveHexPrefix();
-            var addressHash = new Sha3Keccack().CalculateHash(address);
-            var checksumAddress = "0x";
-
-            for (var i = 0; i < address.Length; i++)
-                if (int.Parse(addressHash[i].ToString(), NumberStyles.HexNumber) > 7)
-                    checksumAddress += address[i].ToString().ToUpper();
-                else
-                    checksumAddress += address[i];
-            return checksumAddress;
         }
     }
 }

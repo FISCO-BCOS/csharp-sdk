@@ -598,8 +598,6 @@
             </summary>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:FISCOBCOS.CSharpSdk.Utils.ObjectToBytesUtils.ObjectToBytes(System.Object)" -->
-        <!-- Badly formed XML comment ignored for member "M:FISCOBCOS.CSharpSdk.Utils.ObjectToBytesUtils.BytesToObject(System.Byte[])" -->
         <member name="M:FISCOBCOS.CSharpSdk.Utis.JsonUtils.GetValueByKey``1(Newtonsoft.Json.Linq.JObject,System.String)">
             <summary>
             通过Json数据中的key获取对应的Value 重名的获取第一个

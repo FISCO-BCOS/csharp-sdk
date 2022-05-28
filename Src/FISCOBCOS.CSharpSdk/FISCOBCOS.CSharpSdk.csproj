@@ -1,14 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>林宣名</Authors>
-    <Version>1.0.0.6</Version>
+    <Version>1.0.0.3</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <NeutralLanguage>zh</NeutralLanguage>
-    <PackageIcon>fiscobcos_logo.png</PackageIcon>
-    <Description>Optimize the transaction receipt, add wallet module, mnemonic words, etc</Description>
+    <Description>FISCOBCOS BlockChain CSharpSdk</Description>
     <PackageId>FISCOBCOS.CSharpSdk</PackageId>
     <Product>FISCOBCOS.CSharpSdk</Product>
     <AssemblyName>FISCOBCOS.CSharpSdk</AssemblyName>
@@ -22,7 +21,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NBitcoin" Version="5.0.69" />
     <PackageReference Include="Nethereum.ABI" Version="3.8.0" />
     <PackageReference Include="Nethereum.Contracts" Version="3.8.0" />
     <PackageReference Include="Nethereum.Hex" Version="3.8.0" />
@@ -35,9 +33,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\Img\fiscobcos_logo.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
+    <None Update="Contract\TraceEvidence\EvidenceConV1.abi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Contract\TraceEvidence\EvidenceConV1.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Contract\TraceEvidence\EvidenceConV1.sol">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Contract\TraceEvidence\Table.abi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Contract\TraceEvidence\Table.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Contract\TraceEvidence\Table.sol">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
