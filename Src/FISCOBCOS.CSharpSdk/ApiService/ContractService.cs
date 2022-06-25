@@ -65,9 +65,21 @@ namespace FISCOBCOS.CSharpSdk
 
             var transParams = BuildTransactionParams(resultData, blockNumber, "");
             var tx = BuildRLPTranscation(transParams);
-            tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
-            var result = await SendRequestAysnc<string>(tx.Data, tx.Signature);
-            return result;
+
+            string txHash = null;
+            if (BaseConfig.IsSMCrypt)//国密版本
+            {
+                var txs = GMGetTransRlp(tx);
+                //国密请求
+                txHash =await GMSendRequestAysnc<string>(txs);
+            }
+            else
+            {//标准版本
+                tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
+                txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+
+            }
+            return txHash;
 
         }
 
@@ -108,8 +120,19 @@ namespace FISCOBCOS.CSharpSdk
             var blockNumber = await GetBlockNumberAsync();
             var transDto = BuildTransactionParams(result, blockNumber, contractAddress);
             var tx = BuildRLPTranscation(transDto);
-            tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
-            var txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+
+            string txHash = null;
+            if (BaseConfig.IsSMCrypt)//国密版本
+            {
+                var txs = GMGetTransRlp(tx);
+                //国密请求
+                txHash = await GMSendRequestAysnc<string>(txs);
+            }
+            else
+            {//标准版本
+                tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
+                 txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+            }
 
             if (txHash != null)
             {
@@ -143,8 +166,18 @@ namespace FISCOBCOS.CSharpSdk
             var blockNumber = await GetBlockNumberAsync();
             var transDto = BuildTransactionParams(result, blockNumber, contractAddress);
             var tx = BuildRLPTranscation(transDto);
-            tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
-            var txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+            string txHash = null;
+            if (BaseConfig.IsSMCrypt)//国密版本
+            {
+                var txs = GMGetTransRlp(tx);
+                //国密请求
+                txHash = await GMSendRequestAysnc<string>(txs);
+            }
+            else
+            {//标准版本
+                tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
+                txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+            }
 
             return txHash;
         }
@@ -217,6 +250,23 @@ namespace FISCOBCOS.CSharpSdk
             var response = await _rpcClient.SendRequestAsync<TResult>(request);
             return response;
         }
+
+
+        /// <summary>
+        /// 异步请求发送RPC交易
+        /// </summary>
+        /// <typeparam name="TResult">返回结果</typeparam>
+        /// <param name="txData">交易数据（rlp）</param>
+        /// <param name="txSignature">交易签名</param>
+        /// <returns>返回交易结果</returns>
+        protected async Task<TResult> GMSendRequestAysnc<TResult>(byte[] rsvData)
+        {
+            var rlpSignedEncoded = rsvData.ToHex();
+            var request = new RpcRequest(this._requestId, JsonRPCAPIConfig.SendRawTransaction, new object[] { this._requestObjectId, rlpSignedEncoded });
+            var response = await _rpcClient.SendRequestAsync<TResult>(request);
+            return response;
+        }
+       
         /// <summary>
         /// 异步获取当前区块高度
         /// </summary>

@@ -21,5 +21,7 @@ namespace FISCOBCOS.CSharpSdk.Dto
        
         [JsonProperty("type", Required = Required.Always)]
         public int Type { get; set; }
+
+       
     }
 }

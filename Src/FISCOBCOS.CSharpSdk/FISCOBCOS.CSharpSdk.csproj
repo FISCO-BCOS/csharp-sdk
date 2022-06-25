@@ -21,6 +21,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+   
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="NBitcoin" Version="5.0.69" />
     <PackageReference Include="Nethereum.ABI" Version="3.8.0" />
     <PackageReference Include="Nethereum.Contracts" Version="3.8.0" />
     <PackageReference Include="Nethereum.Hex" Version="3.8.0" />
@@ -30,6 +35,9 @@
     <PackageReference Include="Nethereum.Signer" Version="3.8.0" />
     <PackageReference Include="Nethereum.Util" Version="3.8.0" />
     <PackageReference Include="Nethereum.Web3" Version="3.8.0" />
+	<PackageReference Include="Google.Protobuf" Version="3.19.1" />
+
+
   </ItemGroup>
 
   <ItemGroup>

@@ -49,5 +49,15 @@ namespace FISCOBCOS.CSharpSdk
         /// 默认交易参数Value
         /// </summary>
         public static int DefaultTranscationsValue = 0;
+
+        /// <summary>
+        /// 平台 加密版本 IsSMCrypt=true 采用国密方案
+        /// </summary>
+        public static bool IsSMCrypt = true;
+
+        /// <summary>
+        /// 默认私钥地址
+        /// </summary>
+        public static string DefaultPrivateKeyPemPath = @"\prik.pem";
     }
 }

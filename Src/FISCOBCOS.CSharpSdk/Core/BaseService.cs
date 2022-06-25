@@ -1,4 +1,6 @@
 ﻿using FISCOBCOS.CSharpSdk.Dto;
+using FISCOBCOS.CSharpSdk.Lib;
+using FISCOBCOS.CSharpSdk.SM2;
 using FISCOBCOS.CSharpSdk.Utils;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.ABI.JsonDeserialisation;
@@ -12,9 +14,11 @@ using Nethereum.RLP;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Signer;
 using Nethereum.Web3.Accounts;
+using Org.BouncyCastle.Utilities.Encoders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -87,7 +91,20 @@ namespace FISCOBCOS.CSharpSdk.Core
               rawTransaction.GroupId.ToBytesForRLPEncoding(),rawTransaction.ExtraData.HexToByteArray()});
             return tx;
         }
-
+        /// <summary>
+        /// 创建交易RLP
+        /// </summary>
+        /// <param name="rawTransaction">交易实体</param>
+        /// <returns>交易字节数组</returns>
+        protected Byte[] BuildRLP(TransactionDto rawTransaction)
+        {
+            /*var tx = new RLPSigner(new[] {rawTransaction.Randomid.ToBytesForRLPEncoding(),rawTransaction.GasPrice.ToBytesForRLPEncoding(), rawTransaction.GasLimit.ToBytesForRLPEncoding(),rawTransaction.BlockLimit.ToBytesForRLPEncoding(), rawTransaction.To.HexToByteArray(),  rawTransaction.Value.ToBytesForRLPEncoding(),rawTransaction.Data.HexToByteArray(),rawTransaction.FiscoChainId.ToBytesForRLPEncoding(),
+              rawTransaction.GroupId.ToBytesForRLPEncoding(),rawTransaction.ExtraData.HexToByteArray()});
+           return tx.GetRLPEncodedRaw();*/
+           var tx= Nethereum.RLP.RLP.EncodeElementsAndList(new[] {rawTransaction.Randomid.ToBytesForRLPEncoding(),rawTransaction.GasPrice.ToBytesForRLPEncoding(), rawTransaction.GasLimit.ToBytesForRLPEncoding(),rawTransaction.BlockLimit.ToBytesForRLPEncoding(), rawTransaction.To.HexToByteArray(),  rawTransaction.Value.ToBytesForRLPEncoding(),rawTransaction.Data.HexToByteArray(),rawTransaction.FiscoChainId.ToBytesForRLPEncoding(),
+              rawTransaction.GroupId.ToBytesForRLPEncoding(),rawTransaction.ExtraData.HexToByteArray()});
+            return tx;
+        }
 
         /// <summary>
         ///同步 获取当前区块高度
@@ -122,6 +139,20 @@ namespace FISCOBCOS.CSharpSdk.Core
         }
 
         /// <summary>
+        /// 国密请求发送RPC交易
+        /// </summary>
+        /// <typeparam name="TResult">返回结果</typeparam>
+        /// <returns>返回交易结果</returns>
+        protected TResult GMSendRequest<TResult>(byte[] rsvData) where TResult : class, new()
+        {
+            var rlpSignedEncoded = rsvData.ToHex();
+            var request = new RpcRequestMessage(this._requestId, JsonRPCAPIConfig.SendRawTransaction, new object[] { this._requestObjectId, rlpSignedEncoded });
+            var result = HttpUtils.RpcPost<TResult>(this._url, request);
+            return result;
+        }
+
+
+        /// <summary>
         /// 同步 通用合约部署，只返回交易Hash
         /// </summary>
         /// <param name="binCode">合约内容</param>
@@ -145,14 +176,46 @@ namespace FISCOBCOS.CSharpSdk.Core
             var transParams = BuildTransactionParams(resultData, blockNumber, "");
 
             var tx = BuildRLPTranscation(transParams);
-            tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
-            var result = SendRequest<object>(tx.Data, tx.Signature);
+            object result = null;
+            if (BaseConfig.IsSMCrypt)//国密版本
+            {
+                var txs = GMGetTransRlp(tx);
+                 //国密请求
+                 result = GMSendRequest<object>(txs);            
+            }
+            else {//标准版本
+                tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
+                result = SendRequest<object>(tx.Data, tx.Signature);
+            }
+           
             return Convert.ToString(result);
 
         }
 
+        /// <summary>
+        /// 国密签名交易数据
+        /// </summary>
+        /// <param name="tx"></param>
+        /// <returns></returns>
+        public byte[] GMGetTransRlp(RLPSigner tx) {
 
+            Org.BouncyCastle.Math.BigInteger r, s;
+            SM2Utils.Sign(SM2Utils.SM3Hash(tx.GetRLPEncodedRaw()), AccountUtils.GMGetPrivateKeyByPem(BaseConfig.DefaultPrivateKeyPemPath), out r, out s);
+            var R = LibraryHelper.FromBigInteger(r);
+            var S = LibraryHelper.FromBigInteger(s);
+            var V = AccountUtils.GMGetVByte(_privateKey);
+            byte[][] rsvData = new byte[tx.Data.Length + 3][];
+            Array.Copy(tx.Data, 0, rsvData, 0, tx.Data.Length);
+            rsvData[tx.Data.Length] = V;
+            rsvData[tx.Data.Length + 1] = R;
+            rsvData[tx.Data.Length + 2] = S;
 
+            var txs = Nethereum.RLP.RLP.EncodeElementsAndList(rsvData);
+            return txs;
+           
+        }
+
+      
         /// <summary>
         /// 同步 通用合约部署，返回交易回执
         /// </summary>
@@ -176,6 +239,28 @@ namespace FISCOBCOS.CSharpSdk.Core
         /// <returns>交易回执</returns>
         public ReceiptResultDto SendTranscationWithReceipt(string abi, string contractAddress, string functionName, Parameter[] inputsParameters, params object[] value)
         {
+           var txHash= SendTranscationGetTransHash(abi, contractAddress, functionName, inputsParameters, value);
+            ReceiptResultDto receiptResult = null;
+            if (txHash != null)
+            {
+                receiptResult = GetTranscationReceipt(txHash.ToString());
+            }
+            return receiptResult;
+
+
+        }
+
+        /// <summary>
+        ///同步 发送交易,返回交易Hash
+        /// </summary>
+        /// <param name="abi">合约abi</param>
+        /// <param name="contractAddress">合约地址</param>
+        /// <param name="functionName">合约请求调用方法名称</param>
+        /// <param name="inputsParameters">方法对应的 参数</param>
+        /// <param name="value">请求参数值</param>
+        /// <returns>交易Hash</returns>
+        public string SendTranscationGetTransHash(string abi, string contractAddress, string functionName, Parameter[] inputsParameters, params object[] value)
+        {
             ReceiptResultDto receiptResult = new ReceiptResultDto();
 
             var des = new ABIDeserialiser();
@@ -189,14 +274,24 @@ namespace FISCOBCOS.CSharpSdk.Core
             var blockNumber = GetBlockNumber();
             var transDto = BuildTransactionParams(result, blockNumber, contractAddress);
             var tx = BuildRLPTranscation(transDto);
-            tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
-            var txHash = SendRequest<object>(tx.Data, tx.Signature);
-            if (txHash != null)
+            object txHash = null;
+            if (BaseConfig.IsSMCrypt)//国密版本
             {
-                receiptResult = GetTranscationReceipt(txHash.ToString());
+                var txs = GMGetTransRlp(tx);
+                //国密请求
+                txHash = GMSendRequest<object>(txs);
             }
-            return receiptResult;
+            else
+            {//标准版本
+                tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
+                txHash = SendRequest<object>(tx.Data, tx.Signature);
+
+            }
+           return txHash?.ToString();
+
+
         }
+
 
         /// <summary>
         /// 同步 获取交易回执
