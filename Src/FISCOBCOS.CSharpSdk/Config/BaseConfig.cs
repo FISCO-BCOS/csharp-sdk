@@ -58,6 +58,6 @@ namespace FISCOBCOS.CSharpSdk
         /// <summary>
         /// 默认私钥地址
         /// </summary>
-        public static string DefaultPrivateKeyPemPath = @"\prik.pem";
+        public static string DefaultPrivateKeyPemPath =System.Environment.CurrentDirectory+ @"\..\..\..\KeyFile\prik.pem";
     }
 }
