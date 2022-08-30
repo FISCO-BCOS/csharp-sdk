@@ -120,6 +120,19 @@ namespace FISCOBCOS.CSharpSdk.Core
             return blockNumber;
         }
 
+        /// <summary>
+        ///同步 获取节点版本
+        /// </summary>
+        /// <param name="rpcId">rpcId</param>
+        /// <param name="groupId">群组Id</param>
+        /// <returns></returns>
+        public string GetClientVersion()
+        {
+            var request = new RpcRequestMessage(this._rpcId, JsonRPCAPIConfig.GetClientVersion, new object[] { this._groupId });
+            var responseResult = HttpUtils.RpcPost<object>(this._url, request);
+            return responseResult?.ToString();
+        }
+
         #endregion
 
         #region 同步方法
@@ -199,8 +212,10 @@ namespace FISCOBCOS.CSharpSdk.Core
         /// <returns></returns>
         public byte[] GMGetTransRlp(RLPSigner tx) {
 
+          var userKey=  AccountUtils.GMGetPrivateKeyByPem(BaseConfig.DefaultPrivateKeyPemPath);
+            _privateKey= AccountUtils.GMGetPrivateKeyStrByKeyObject(userKey);
             Org.BouncyCastle.Math.BigInteger r, s;
-            SM2Utils.Sign(SM2Utils.SM3Hash(tx.GetRLPEncodedRaw()), AccountUtils.GMGetPrivateKeyByPem(BaseConfig.DefaultPrivateKeyPemPath), out r, out s);
+            SM2Utils.Sign(SM2Utils.SM3Hash(tx.GetRLPEncodedRaw()), userKey, out r, out s);
             var R = LibraryHelper.FromBigInteger(r);
             var S = LibraryHelper.FromBigInteger(s);
             var V = AccountUtils.GMGetVByte(_privateKey);

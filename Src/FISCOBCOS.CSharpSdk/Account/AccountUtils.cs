@@ -144,6 +144,19 @@ namespace FISCOBCOS.CSharpSdk
             return smPrivateKey;
         }
 
+        /// <summary>
+        /// 通过私钥对象获取私钥字符串
+        /// </summary>
+        /// <param name="smPrivateKey"></param>
+        /// <returns></returns>
+        public static string GMGetPrivateKeyStrByKeyObject(ECPrivateKeyParameters smPrivateKey) {
+            var privateKeyStr = EthUtils.ByteArrayToHexString(smPrivateKey.D.ToByteArrayUnsigned());
+            return privateKeyStr;
+        }
+       
+       
+
+
         #region
         /// <summary>
         /// 十六进制私钥字符串配套相关转换

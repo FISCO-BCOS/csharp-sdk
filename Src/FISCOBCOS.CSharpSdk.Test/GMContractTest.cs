@@ -22,7 +22,10 @@ namespace FISCOBCOS.CSharpSdkTest
 
         public GMContractTest()
         {
-            this.privateKey = "1a9275393047f5e59acfa4a31cdee48cacc7e698b0070aaab3f64f87af66606e";
+            var userKey = AccountUtils.GMGetPrivateKeyByPem(BaseConfig.DefaultPrivateKeyPemPath);
+            this.privateKey = AccountUtils.GMGetPrivateKeyStrByKeyObject(userKey);
+            
+            //this.privateKey = "1a9275393047f5e59acfa4a31cdee48cacc7e698b0070aaab3f64f87af66606e";//国密私钥，与sdk内置prik.pem 对应私钥一样
             //this.privateKey = ecpPrivateKey;
             bool getAbiState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TestData\\" + "DefaultTest.abi", out abi);
             bool getBinCodeState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TestData\\" + "DefaultTest.bin", out binCode);
@@ -37,8 +40,11 @@ namespace FISCOBCOS.CSharpSdkTest
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, "");
             var result = contractService.GetBlockNumber();
+           var version= contractService.GetClientVersion();
             Assert.True(result > 0);
         }
+
+
 
         /// <summary>
         /// 同步合约部署    
@@ -61,7 +67,7 @@ namespace FISCOBCOS.CSharpSdkTest
         [Fact]
         public void GMGetReceiptByTransHashTest()
         {
-            string txHash = "0xad94d3258089de4e43e7fe8eeb7519d026e19c5d82fc3ad09643bad4bd8c80ab";
+            string txHash = "0xfda0078d46ec0f3c7dccea4154f69d8fd7e49720924583eff661d7e4bad1369f";
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var result =  contractService.GetTranscationReceipt(txHash);
 
@@ -91,7 +97,7 @@ namespace FISCOBCOS.CSharpSdkTest
         {
 
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            string contractAddress = "0xc7a9a1e950f549519950fa3070fd7b7e3a3a229d";//上面测试部署合约得到合约地址
+            string contractAddress = "0x26cf8fcb783bbcc7b320a46b0d1dfff5fbb27feb";//上面测试部署合约得到合约地址
             var inputsParameters = new[] { BuildParams.CreateParam("string", "n") };
             var paramsValue = new object[] { "123" };
             string functionName = "set";//调用合约方法
@@ -122,7 +128,7 @@ namespace FISCOBCOS.CSharpSdkTest
         public void CallRequestTest()
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            string contractAddress = "0x149d743274d91eeea8f646901fc8dd79551dccda";//上面测试部署合约得到合约地址
+            string contractAddress = "0x26cf8fcb783bbcc7b320a46b0d1dfff5fbb27feb";//上面测试部署合约得到合约地址
             string functionName = "get";
             var result =  contractService.CallRequest(contractAddress, abi, functionName);
             var solidityAbi = new SolidityABI(abi);
