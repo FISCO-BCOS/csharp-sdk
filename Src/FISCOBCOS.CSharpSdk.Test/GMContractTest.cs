@@ -19,6 +19,7 @@ namespace FISCOBCOS.CSharpSdkTest
         public string privateKey = "";
         string binCode = "";
         string abi = "";
+       
 
         public GMContractTest()
         {
@@ -27,8 +28,9 @@ namespace FISCOBCOS.CSharpSdkTest
             
             //this.privateKey = "1a9275393047f5e59acfa4a31cdee48cacc7e698b0070aaab3f64f87af66606e";//国密私钥，与sdk内置prik.pem 对应私钥一样
             //this.privateKey = ecpPrivateKey;
-            bool getAbiState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TestData\\" + "DefaultTest.abi", out abi);
-            bool getBinCodeState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TestData\\" + "DefaultTest.bin", out binCode);
+            bool getAbiState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TestData\\" + "DefaultTest111.abi", out abi);
+            bool getBinCodeState = FileUtils.ReadFile(Environment.CurrentDirectory + "\\TestData\\" + "DefaultTest111.bin", out binCode);
+           
         }
 
 
@@ -67,11 +69,11 @@ namespace FISCOBCOS.CSharpSdkTest
         [Fact]
         public void GMGetReceiptByTransHashTest()
         {
-            string txHash = "0xfda0078d46ec0f3c7dccea4154f69d8fd7e49720924583eff661d7e4bad1369f";
+            string txHash = "0x4fadfcbeba245f764f7a118c6cf1347344708095055f8b2e0a0b5ed8b5993744";
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var result =  contractService.GetTranscationReceipt(txHash);
 
-            Assert.NotNull(result.ContractAddress);
+            Assert.NotNull(result.AddressOnlyWhenDeployContract);
            
         }
 
@@ -85,7 +87,7 @@ namespace FISCOBCOS.CSharpSdkTest
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var result =  contractService.DeployContractWithReceipt(binCode,abi);
-            Assert.NotNull(result.ContractAddress);//0x149d743274d91eeea8f646901fc8dd79551dccda
+            Assert.NotNull(result.AddressOnlyWhenDeployContract);//0x149d743274d91eeea8f646901fc8dd79551dccda
         }
 
         /// <summary>
@@ -97,7 +99,7 @@ namespace FISCOBCOS.CSharpSdkTest
         {
 
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            string contractAddress = "0x26cf8fcb783bbcc7b320a46b0d1dfff5fbb27feb";//上面测试部署合约得到合约地址
+            string contractAddress = "0xec7c2f42110189433f994956334441fab384cb7b";//上面测试部署合约得到合约地址
             var inputsParameters = new[] { BuildParams.CreateParam("string", "n") };
             var paramsValue = new object[] { "123" };
             string functionName = "set";//调用合约方法
@@ -128,7 +130,7 @@ namespace FISCOBCOS.CSharpSdkTest
         public void CallRequestTest()
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            string contractAddress = "0x26cf8fcb783bbcc7b320a46b0d1dfff5fbb27feb";//上面测试部署合约得到合约地址
+            string contractAddress = "0x362491b04bdd84b4aafa94a98a6ae13e3cf3fb19";//上面测试部署合约得到合约地址
             string functionName = "get";
             var result =  contractService.CallRequest(contractAddress, abi, functionName);
             var solidityAbi = new SolidityABI(abi);
@@ -162,7 +164,7 @@ namespace FISCOBCOS.CSharpSdkTest
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var result = await contractService.GetTranscationReceiptAsync(txHash);
 
-            Assert.NotNull(result.ContractAddress);//0x26cf8fcb783bbcc7b320a46b0d1dfff5fbb27feb
+            Assert.NotNull(result.AddressOnlyWhenDeployContract);//0x26cf8fcb783bbcc7b320a46b0d1dfff5fbb27feb
         }
 
         /// <summary>
@@ -174,7 +176,7 @@ namespace FISCOBCOS.CSharpSdkTest
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var result = await contractService.DeployContractWithReceiptAsync(binCode,abi);
-            Assert.NotNull(result.ContractAddress);//0x149d743274d91eeea8f646901fc8dd79551dccda
+            Assert.NotNull(result.AddressOnlyWhenDeployContract);//0x149d743274d91eeea8f646901fc8dd79551dccda
         }
 
 

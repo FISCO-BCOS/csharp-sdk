@@ -26,7 +26,7 @@ namespace FISCOBCOS.CSharpSdk.Dto
         /// 合约地址
         /// </summary>
         [JsonProperty("contractAddress")]
-        public string ContractAddress { get; set; }
+        public string AddressOnlyWhenDeployContract { get; set; }
         /// <summary>
         /// 调用者
         /// </summary>

@@ -51,32 +51,19 @@ namespace FISCOBCOS.CSharpSdk
         {
             var blockNumber = await GetBlockNumberAsync();
             var resultData = "";
-            ConstructorCallEncoder _constructorCallEncoder = new ConstructorCallEncoder();
-            if (values == null || values.Length == 0)
-                resultData = _constructorCallEncoder.EncodeRequest(binCode, "");
-
-            var des = new ABIDeserialiser();
-            var contract = des.DeserialiseContract(abi);
-            if (contract.Constructor == null)
-                throw new Exception(
-                    "Parameters supplied for a constructor but ABI does not contain a constructor definition");
-            resultData = _constructorCallEncoder.EncodeRequest(binCode,
-         contract.Constructor.InputParameters, values);
-
-            var transParams = BuildTransactionParams(resultData, blockNumber, "");
-            var tx = BuildRLPTranscation(transParams);
+            var rlpTransData = BuildDeployContractData(binCode, abi, blockNumber, values);
 
             string txHash = null;
             if (BaseConfig.IsSMCrypt)//国密版本
             {
-                var txs = GMGetTransRlp(tx);
+                var txs = GMGetTransRlp(rlpTransData);
                 //国密请求
                 txHash =await GMSendRequestAysnc<string>(txs);
             }
             else
             {//标准版本
-                tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
-                txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+                rlpTransData.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
+                txHash = await SendRequestAysnc<string>(rlpTransData.Data, rlpTransData.Signature);
 
             }
             return txHash;
@@ -109,29 +96,19 @@ namespace FISCOBCOS.CSharpSdk
         public async Task<ReceiptResultDto> SendTranscationWithReceiptAsync(string abi, string contractAddress, string functionName, Parameter[] inputsParameters, params object[] value)
         {
             ReceiptResultDto receiptResult = new ReceiptResultDto();
-
-            var des = new ABIDeserialiser();
-            var contract = des.DeserialiseContract(abi);
-            var function = contract.Functions.FirstOrDefault(x => x.Name == functionName);
-            var sha3Signature = function.Sha3Signature;// "0x53ba0944";
-            var functionCallEncoder = new FunctionCallEncoder();
-            var result = functionCallEncoder.EncodeRequest(sha3Signature, inputsParameters,
-                value);
-            var blockNumber = await GetBlockNumberAsync();
-            var transDto = BuildTransactionParams(result, blockNumber, contractAddress);
-            var tx = BuildRLPTranscation(transDto);
-
+            var blockNumber =await GetBlockNumberAsync();
+            var rlpTransData = BuildTransData(abi, contractAddress, functionName, blockNumber, inputsParameters, value);
             string txHash = null;
             if (BaseConfig.IsSMCrypt)//国密版本
             {
-                var txs = GMGetTransRlp(tx);
+                var txs = GMGetTransRlp(rlpTransData);
                 //国密请求
                 txHash = await GMSendRequestAysnc<string>(txs);
             }
             else
             {//标准版本
-                tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
-                 txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+                rlpTransData.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
+                 txHash = await SendRequestAysnc<string>(rlpTransData.Data, rlpTransData.Signature);
             }
 
             if (txHash != null)
@@ -155,28 +132,19 @@ namespace FISCOBCOS.CSharpSdk
         public async Task<string> SendTranscationWithTransHashAsync(string abi, string contractAddress, string functionName, Parameter[] inputsParameters, params object[] value)
         {
             ReceiptResultDto receiptResult = new ReceiptResultDto();
-
-            var des = new ABIDeserialiser();
-            var contract = des.DeserialiseContract(abi);
-            var function = contract.Functions.FirstOrDefault(x => x.Name == functionName);
-            var sha3Signature = function.Sha3Signature;// "0x53ba0944";
-            var functionCallEncoder = new FunctionCallEncoder();
-            var result = functionCallEncoder.EncodeRequest(sha3Signature, inputsParameters,
-                value);
             var blockNumber = await GetBlockNumberAsync();
-            var transDto = BuildTransactionParams(result, blockNumber, contractAddress);
-            var tx = BuildRLPTranscation(transDto);
+            var rlpTransData = BuildTransData(abi, contractAddress, functionName,blockNumber, inputsParameters, value);
             string txHash = null;
             if (BaseConfig.IsSMCrypt)//国密版本
             {
-                var txs = GMGetTransRlp(tx);
+                var txs = GMGetTransRlp(rlpTransData);
                 //国密请求
                 txHash = await GMSendRequestAysnc<string>(txs);
             }
             else
             {//标准版本
-                tx.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
-                txHash = await SendRequestAysnc<string>(tx.Data, tx.Signature);
+                rlpTransData.Sign(new EthECKey(this._privateKey.HexToByteArray(), true));
+                txHash = await SendRequestAysnc<string>(rlpTransData.Data, rlpTransData.Signature);
             }
 
             return txHash;
@@ -207,26 +175,7 @@ namespace FISCOBCOS.CSharpSdk
         /// <returns>返回交易回执</returns>
         public async Task<ReceiptResultDto> CallRequestAsync(string contractAddress, string abi, string callFunctionName, Parameter[] inputsParameters = null, params object[] value)
         {
-            CallInput callDto = new CallInput();
-            callDto.From = new Account(this._privateKey).Address.ToLower();//address ;
-            var contractAbi = new ABIDeserialiser().DeserialiseContract(abi);
-            callDto.To = contractAddress;
-            callDto.Value = new HexBigInteger(0);
-            var function = contractAbi.Functions.FirstOrDefault(x => x.Name == callFunctionName);
-
-            var sha3Signature = function.Sha3Signature;// "0x53ba0944";
-
-            if (inputsParameters == null)
-            {
-                callDto.Data = "0x" + sha3Signature;
-            }
-            else
-            {
-                var functionCallEncoder = new FunctionCallEncoder();
-                var funcData = functionCallEncoder.EncodeRequest(sha3Signature, inputsParameters,
-                    value);
-                callDto.Data = funcData;
-            }
+            var callDto = BuildCallData(contractAddress, abi, callFunctionName, inputsParameters, value);
             var getRequest = new RpcRequest(this._requestId, JsonRPCAPIConfig.Call, new object[] { this._requestObjectId, callDto });
             var result = await this._rpcClient.SendRequestAsync<ReceiptResultDto>(getRequest);
 

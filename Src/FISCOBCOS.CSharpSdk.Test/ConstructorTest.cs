@@ -34,7 +34,7 @@ namespace FISCOBCOS.CSharpSdk.Test
             var paramsValue = new object[] { "123" };
             var txHash = contractService.DeployContract(binCode, abi, paramsValue);
             var result = contractService.GetTranscationReceipt(txHash);
-            Assert.NotNull(result.ContractAddress);
+            Assert.NotNull(result.AddressOnlyWhenDeployContract);
            
         }
 

@@ -5,7 +5,7 @@ import "./Table.sol";
 //存证合约
 contract EvidenceConV1 {
       // event
-      event RegisterEvent(string serviceId,string sn,string rid,string ts,string remarkJsonValue,address account,uint256 timeStamp);
+      event RegisterEvent(string serviceId,string typeName,string dataValue);
       event SetPermitUserEvent(uint256 state,address msgAddress,address userAddress,bool setPermitState,uint256 timeStamp, string remark);
       event InsertDbErrorEvent(string serviceId,string sn,string rid,string ts,string remarkJsonValue,address account,uint256 timeStamp);
 
@@ -129,6 +129,7 @@ contract EvidenceConV1 {
             // 插入
             int count = table.insert(serviceId, entry);
             if (count == 1) {
+                emit RegisterEvent(serviceId,typeName,dataValue);
                   // 成功
                   ret_code = 1;
               return (ret_code,"存证数据上链，插入数据成功！");

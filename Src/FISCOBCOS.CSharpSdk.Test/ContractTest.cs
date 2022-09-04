@@ -64,7 +64,7 @@ namespace FISCOBCOS.CSharpSdkTest
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var result =  contractService.GetTranscationReceipt(txHash);
 
-            Assert.NotNull(result.ContractAddress);
+            Assert.NotNull(result.AddressOnlyWhenDeployContract);
            
         }
 
@@ -76,8 +76,8 @@ namespace FISCOBCOS.CSharpSdkTest
         public void DeployContractWithReceiptTest()
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
-            var result =  contractService.DeployContractWithReceipt(binCode);
-            Assert.NotNull(result.ContractAddress);//0x149d743274d91eeea8f646901fc8dd79551dccda
+            var result =  contractService.DeployContractWithReceipt(binCode,abi);
+            Assert.NotNull(result.AddressOnlyWhenDeployContract);//0x149d743274d91eeea8f646901fc8dd79551dccda
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace FISCOBCOS.CSharpSdkTest
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var result = await contractService.GetTranscationReceiptAsync(txHash);
 
-            Assert.NotNull(result.ContractAddress);
+            Assert.NotNull(result.AddressOnlyWhenDeployContract);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace FISCOBCOS.CSharpSdkTest
         {
             var contractService = new ContractService(BaseConfig.DefaultUrl, BaseConfig.DefaultRpcId, BaseConfig.DefaultChainId, BaseConfig.DefaultGroupId, privateKey);
             var result = await contractService.DeployContractWithReceiptAsync(binCode);
-            Assert.NotNull(result.ContractAddress);//0x149d743274d91eeea8f646901fc8dd79551dccda
+            Assert.NotNull(result.AddressOnlyWhenDeployContract);//0x149d743274d91eeea8f646901fc8dd79551dccda
         }
 
 
